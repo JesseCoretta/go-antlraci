@@ -1,6 +1,6 @@
 # go-antlraci
 
-[![Go Report Card](https://goreportcard.com/badge/JesseCoretta/go-antlraci)](https://goreportcard.com/report/github.com/JesseCoretta/go-antlraci) [![GoDoc](https://godoc.org/github.com/JesseCoretta/go-antlraci?status.svg)](https://godoc.org/github.com/JesseCoretta/go-antlraci) ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
+[![GoDoc](https://godoc.org/github.com/JesseCoretta/go-antlraci?status.svg)](https://godoc.org/github.com/JesseCoretta/go-antlraci) ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
 
 Package antlraci contains an ANTLR4-generated codebase meant to facilitate the parsing of ACIv3 definitions. The codebase is created through use of ANTLR4 parser/lexer grammar rules that honor the complete third (3rd) version of the Access Control Instruction syntax -- a form of permission expressions favored and supported by multiple X.500/LDAP server implementations on the market today.
 
