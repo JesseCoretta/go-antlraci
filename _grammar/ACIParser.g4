@@ -116,10 +116,10 @@ permissionBindRule
   ;
 
 permission
-  : permissionDisposition openingParenthesis privilege ( commaDelimiter privilege )* closingParenthesis
+  : disposition openingParenthesis privilege ( commaDelimiter privilege )* closingParenthesis
   ;
 
-permissionDisposition
+disposition
   : grantedPermission
   | withheldPermission
   ;
@@ -155,6 +155,11 @@ exportPrivilege		: EXP_PRIV	;
 allPrivilege		: ALL_PRIV	;
 noPrivilege		: NO_PRIV	;
 
+/*
+targetRule describes the (optional) Target Rule syntax. Target Rules
+are *ALWAYS* parenthetical. Each distinct keyword should only be used
+ONCE in a given sequence of targetRules.
+*/
 targetRule
   : openingParenthesis targetKeyword targetOperator expressionValues closingParenthesis
   ;
