@@ -71,7 +71,6 @@ TKW_AF		: 'targattrfilters'	;
 TKW_CTRL	: 'targetcontrol'	;
 TKW_EXTOP	: 'extop'		;
 
-PARENT		: 'parent'		;
 DQUOTE		: '"'			;
 LPAREN		: '('			;
 RPAREN		: ')'			;
