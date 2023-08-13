@@ -295,10 +295,10 @@ func (r Instruction) String() string {
 ParseTargetRule parses a single target rule expression, e.g.: 'targetattr = "cn"',
 and returns a *Rule instance alongside an error.
 */
-func ParseTargetRule(raw string) (T *Rule, err error) {
+func ParseTargetRule(raw string) (*Rule, error) {
 	p, err := initAntlr(raw)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	// Parse and return our TargetRule instance
@@ -312,41 +312,54 @@ func processTargetRule(itrc ITargetRuleContext) (r *Rule, err error) {
 	}
 
 	ct := itrc.GetChildCount()
-	r = new(Rule)
+	R := new(Rule)
 
 	for k := 0; k < ct; k++ {
 		var ok bool
 
 		switch tv := itrc.GetChild(k).(type) {
 
+		case *OpeningParenthesisContext:
+			if hasPfx(tv.GetText(), `<missing`) {
+				err = errorf("Missing open parenthesis for target rule")
+				return
+			}
+
+		case *ClosingParenthesisContext:
+			if hasPfx(tv.GetText(), `<missing`) {
+				err = errorf("Missing close parenthesis for target rule")
+				return
+			}
+
 		case *TargetKeywordContext:
-			if r.Keyword, ok = processRuleKeyword(tv); !ok {
+			if R.Keyword, ok = processRuleKeyword(tv); !ok {
 				err = errorf("Failed to process %T for Target Rule keyword", tv)
 				return
 			}
 
 		case *TargetOperatorContext:
-			if r.Operator, ok = processRuleOperator(tv); !ok {
+			if R.Operator, ok = processRuleOperator(tv); !ok {
 				err = errorf("Failed to process %T for Target Rule operator", tv)
 				return
 			}
 
 		case *ExpressionValuesContext:
-			if r.Values, err = processRuleExpression(tv); err != nil {
+			if R.Values, err = processRuleExpression(tv); err != nil {
 				return
 			}
 		}
 	}
 
-	if !ruleReady(r) {
-		err = errorf("%T is missing one of 'Keyword', 'Operator' or 'Values'; cannot proceed", r)
-		r = nil
+	// Stamp the return as known to be a valid
+	// TARGET rule, and perform the hand-off.
+	R.kind = 2
+	if !ruleReady(R) {
+		err = errorf("%T is not parenthetical, or is missing 'Keyword', 'Operator' and/or 'Values'; cannot proceed", R)
 		return
 	}
 
-	// Stamp the return as known to be a valid
-	// TARGET rule.
-	r.kind = 2
+	r = R
+
 
 	return
 }
@@ -450,6 +463,9 @@ func processInstructionAnchor(ins IInstructionAnchorContext) (label AccessContro
 	// need to preserve this character, however, as it is
 	// an ACIv3 "constant" that is predictable.
 	if rt := ins.RuleTerminator(); rt == nil {
+		err = errorf("Instruction anchor (version 3.0; acl \"...\") is not terminated properly (hint: ';')", ins)
+		return
+	} else if hasPfx(rt.GetText(), `<missing`) {
 		err = errorf("Instruction anchor (version 3.0; acl \"...\") is not terminated properly (hint: ';')", ins)
 		return
 	}
@@ -615,10 +631,10 @@ func processBooleanWord(word any) (w BooleanWord, ok bool) {
 ParseBindRule parses a single bind rule expression, e.g.: 'userdn = "ldap:///anyone"',
 and returns a *Rule instance alongside an error.
 */
-func ParseBindRule(raw string) (T *Rule, err error) {
+func ParseBindRule(raw string) (*Rule, error) {
 	p, err := initAntlr(raw)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	// Parse and return our BindRule instance
@@ -639,7 +655,7 @@ func processBindRule(ibrc IBindRuleContext) (r *Rule, err error) {
 	}
 
 	ct := ibrc.GetChildCount()
-	r = new(Rule)
+	R := new(Rule)
 
 	// iterate child components of the bind rule:
 	// keyword, operator, value(s).
@@ -649,19 +665,19 @@ func processBindRule(ibrc IBindRuleContext) (r *Rule, err error) {
 		switch tv := ibrc.GetChild(k).(type) {
 
 		case *BindKeywordContext:
-			if r.Keyword, ok = processRuleKeyword(tv); !ok {
+			if R.Keyword, ok = processRuleKeyword(tv); !ok {
 				err = errorf("Failed to process %T for Bind Rule keyword", tv)
 				return
 			}
 
 		case *BindOperatorContext:
-			if r.Operator, ok = processRuleOperator(tv); !ok {
+			if R.Operator, ok = processRuleOperator(tv); !ok {
 				err = errorf("Failed to process %T for Bind Rule operator", tv)
 				return
 			}
 
 		case *ExpressionValuesContext:
-			if r.Values, err = processRuleExpression(tv); err != nil {
+			if R.Values, err = processRuleExpression(tv); err != nil {
 				return
 			}
 		}
@@ -669,15 +685,15 @@ func processBindRule(ibrc IBindRuleContext) (r *Rule, err error) {
 
 	// its all or nothing
 
-	if !ruleReady(r) {
-		err = errorf("%T is missing one of 'Keyword', 'Operator' or 'Values'; cannot proceed", r)
-		r = nil
+	if !ruleReady(R) {
+		err = errorf("%T is missing one of 'Keyword', 'Operator' or 'Values'; cannot proceed", R)
 		return
 	}
 
 	// Stamp the return as known to be a valid
 	// BIND rule.
-	r.kind = 1
+	R.kind = 1
+	r = R
 
 	return
 }
@@ -686,8 +702,8 @@ func processBindRule(ibrc IBindRuleContext) (r *Rule, err error) {
 String is a stringer method that returns the string representation
 of a Rule, which may be a Target Rule or a Bind Rule.
 */
-func (r Rule) String() string {
-	if ruleReady(&r) {
+func (r *Rule) String() string {
+	if ruleReady(r) {
 		return sprintf("%s %s %s",
 			r.Keyword,
 			r.Operator,
@@ -720,7 +736,8 @@ func ruleReady(r *Rule) bool {
 
 	return r.Values.Len() > 0 &&
 		len(r.Operator) > 0 &&
-		len(r.Keyword) > 0
+		len(r.Keyword) > 0 &&
+		r.Kind() != ``
 }
 
 func processBindRules(ctx IBindRulesContext, depth int) (r BindRules, err error) {
@@ -773,9 +790,9 @@ func processBindRules(ctx IBindRulesContext, depth int) (r BindRules, err error)
 				r = append(r, sprintf("CLOSE_PARENTHESIS_%d", depth))
 			}
 
-			// context type(s) are Boolean WORD
-			// operators that "glue" bind rule(s)
-			// together in a logical manner.
+		// context type(s) are Boolean WORD
+		// operators that "glue" bind rule(s)
+		// together in a logical manner.
 		case *WordOrContext,
 			*WordAndContext,
 			*WordNotContext:
