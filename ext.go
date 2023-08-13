@@ -297,8 +297,7 @@ func ParseTargetRule(raw string) (T *Rule, err error) {
 		return
 	}
 
-	// Parse and return our BindRules instance, which
-	// (hopefully) contains one (1) or more Bind Rule(s).
+	// Parse and return our TargetRule instance
 	return processTargetRule(p.TargetRule())
 }
 
@@ -612,8 +611,7 @@ func ParseBindRule(raw string) (T *Rule, err error) {
 		return
 	}
 
-	// Parse and return our BindRules instance, which
-	// (hopefully) contains one (1) or more Bind Rule(s).
+	// Parse and return our BindRule instance
 	return processBindRule(p.BindRule())
 }
 
