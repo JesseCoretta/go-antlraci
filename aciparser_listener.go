@@ -22,8 +22,8 @@ type ACIParserListener interface {
 	// EnterPermission is called when entering the permission production.
 	EnterPermission(c *PermissionContext)
 
-	// EnterPermissionDisposition is called when entering the permissionDisposition production.
-	EnterPermissionDisposition(c *PermissionDispositionContext)
+	// EnterDisposition is called when entering the disposition production.
+	EnterDisposition(c *DispositionContext)
 
 	// EnterGrantedPermission is called when entering the grantedPermission production.
 	EnterGrantedPermission(c *GrantedPermissionContext)
@@ -220,8 +220,8 @@ type ACIParserListener interface {
 	// ExitPermission is called when exiting the permission production.
 	ExitPermission(c *PermissionContext)
 
-	// ExitPermissionDisposition is called when exiting the permissionDisposition production.
-	ExitPermissionDisposition(c *PermissionDispositionContext)
+	// ExitDisposition is called when exiting the disposition production.
+	ExitDisposition(c *DispositionContext)
 
 	// ExitGrantedPermission is called when exiting the grantedPermission production.
 	ExitGrantedPermission(c *GrantedPermissionContext)

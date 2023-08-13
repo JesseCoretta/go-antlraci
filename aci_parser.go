@@ -36,30 +36,30 @@ func aciparserParserInit() {
 		"'ssf'", "'ip'", "'dns'", "'authmethod'", "'timeofday'", "'dayofweek'",
 		"'target'", "'target_to'", "'target_from'", "'targetscope'", "'targetattr'",
 		"'targetfilter'", "'targattrfilters'", "'targetcontrol'", "'extop'",
-		"'parent'", "'\"'", "'('", "')'", "','", "';'", "'='", "'!='", "'<'",
-		"'<='", "'>'", "'>='", "'&&'", "'||'", "", "'read'", "'write'", "'add'",
-		"'compare'", "'search'", "'delete'", "'proxy'", "'export'", "'import'",
-		"'selfwrite'", "'all'", "'none'", "'allow'", "'deny'",
+		"'\"'", "'('", "')'", "','", "';'", "'='", "'!='", "'<'", "'<='", "'>'",
+		"'>='", "'&&'", "'||'", "", "'read'", "'write'", "'add'", "'compare'",
+		"'search'", "'delete'", "'proxy'", "'export'", "'import'", "'selfwrite'",
+		"'all'", "'none'", "'allow'", "'deny'",
 	}
 	staticData.SymbolicNames = []string{
 		"", "BKW_UDN", "BKW_GDN", "BKW_RDN", "BKW_UAT", "BKW_GAT", "BKW_SSF",
 		"BKW_IP", "BKW_DNS", "BKW_AM", "BKW_TOD", "BKW_DOW", "TKW_TARGET", "TKW_TO",
 		"TKW_FROM", "TKW_SCOPE", "TKW_ATTR", "TKW_FILTER", "TKW_AF", "TKW_CTRL",
-		"TKW_EXTOP", "PARENT", "DQUOTE", "LPAREN", "RPAREN", "COMMA", "SEMI",
-		"EQ", "NE", "LT", "LE", "GT", "GE", "SYMBOLIC_AND", "SYMBOLIC_OR", "ANCHOR",
-		"READ_PRIV", "WRITE_PRIV", "ADD_PRIV", "CMP_PRIV", "SRC_PRIV", "DEL_PRIV",
-		"PRX_PRIV", "EXP_PRIV", "IMP_PRIV", "SLF_PRIV", "ALL_PRIV", "NO_PRIV",
-		"ALLOW", "DENY", "WORD_AND", "WORD_OR", "WORD_NOT", "NCTF_TO_WHSP",
-		"QUOTED_STRING", "WS",
+		"TKW_EXTOP", "DQUOTE", "LPAREN", "RPAREN", "COMMA", "SEMI", "EQ", "NE",
+		"LT", "LE", "GT", "GE", "SYMBOLIC_AND", "SYMBOLIC_OR", "ANCHOR", "READ_PRIV",
+		"WRITE_PRIV", "ADD_PRIV", "CMP_PRIV", "SRC_PRIV", "DEL_PRIV", "PRX_PRIV",
+		"EXP_PRIV", "IMP_PRIV", "SLF_PRIV", "ALL_PRIV", "NO_PRIV", "ALLOW",
+		"DENY", "WORD_AND", "WORD_OR", "WORD_NOT", "NCTF_TO_WHSP", "QUOTED_STRING",
+		"WS",
 	}
 	staticData.RuleNames = []string{
 		"parse", "instruction", "instructionAnchor", "permissionBindRule", "permission",
-		"permissionDisposition", "grantedPermission", "withheldPermission",
-		"privilege", "readPrivilege", "writePrivilege", "selfWritePrivilege",
-		"comparePrivilege", "searchPrivilege", "proxyPrivilege", "addPrivilege",
-		"deletePrivilege", "importPrivilege", "exportPrivilege", "allPrivilege",
-		"noPrivilege", "targetRule", "targetOperator", "targetRules", "wordAnd",
-		"wordOr", "wordNot", "bindRules", "bindRule", "expressionValues", "symbolicOr",
+		"disposition", "grantedPermission", "withheldPermission", "privilege",
+		"readPrivilege", "writePrivilege", "selfWritePrivilege", "comparePrivilege",
+		"searchPrivilege", "proxyPrivilege", "addPrivilege", "deletePrivilege",
+		"importPrivilege", "exportPrivilege", "allPrivilege", "noPrivilege",
+		"targetRule", "targetOperator", "targetRules", "wordAnd", "wordOr",
+		"wordNot", "bindRules", "bindRule", "expressionValues", "symbolicOr",
 		"bindOperator", "lessThan", "lessThanOrEqual", "greaterThan", "greaterThanOrEqual",
 		"equalTo", "notEqualTo", "bindKeyword", "bindUserDistinguishedName",
 		"bindGroupDistinguishedName", "bindRoleDistinguishedName", "bindUserAttributes",
@@ -73,7 +73,7 @@ func aciparserParserInit() {
 	}
 	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 55, 372, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 54, 372, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
 		10, 2, 11, 7, 11, 2, 12, 7, 12, 2, 13, 7, 13, 2, 14, 7, 14, 2, 15, 7, 15,
 		2, 16, 7, 16, 2, 17, 7, 17, 2, 18, 7, 18, 2, 19, 7, 19, 2, 20, 7, 20, 2,
@@ -146,8 +146,8 @@ func aciparserParserInit() {
 		1, 0, 0, 0, 163, 161, 1, 0, 0, 0, 163, 164, 1, 0, 0, 0, 164, 166, 1, 0,
 		0, 0, 165, 163, 1, 0, 0, 0, 166, 167, 3, 122, 61, 0, 167, 9, 1, 0, 0, 0,
 		168, 171, 3, 12, 6, 0, 169, 171, 3, 14, 7, 0, 170, 168, 1, 0, 0, 0, 170,
-		169, 1, 0, 0, 0, 171, 11, 1, 0, 0, 0, 172, 173, 5, 48, 0, 0, 173, 13, 1,
-		0, 0, 0, 174, 175, 5, 49, 0, 0, 175, 15, 1, 0, 0, 0, 176, 189, 3, 18, 9,
+		169, 1, 0, 0, 0, 171, 11, 1, 0, 0, 0, 172, 173, 5, 47, 0, 0, 173, 13, 1,
+		0, 0, 0, 174, 175, 5, 48, 0, 0, 175, 15, 1, 0, 0, 0, 176, 189, 3, 18, 9,
 		0, 177, 189, 3, 20, 10, 0, 178, 189, 3, 22, 11, 0, 179, 189, 3, 24, 12,
 		0, 180, 189, 3, 26, 13, 0, 181, 189, 3, 28, 14, 0, 182, 189, 3, 30, 15,
 		0, 183, 189, 3, 32, 16, 0, 184, 189, 3, 34, 17, 0, 185, 189, 3, 36, 18,
@@ -155,21 +155,21 @@ func aciparserParserInit() {
 		188, 177, 1, 0, 0, 0, 188, 178, 1, 0, 0, 0, 188, 179, 1, 0, 0, 0, 188,
 		180, 1, 0, 0, 0, 188, 181, 1, 0, 0, 0, 188, 182, 1, 0, 0, 0, 188, 183,
 		1, 0, 0, 0, 188, 184, 1, 0, 0, 0, 188, 185, 1, 0, 0, 0, 188, 186, 1, 0,
-		0, 0, 188, 187, 1, 0, 0, 0, 189, 17, 1, 0, 0, 0, 190, 191, 5, 36, 0, 0,
-		191, 19, 1, 0, 0, 0, 192, 193, 5, 37, 0, 0, 193, 21, 1, 0, 0, 0, 194, 195,
-		5, 45, 0, 0, 195, 23, 1, 0, 0, 0, 196, 197, 5, 39, 0, 0, 197, 25, 1, 0,
-		0, 0, 198, 199, 5, 40, 0, 0, 199, 27, 1, 0, 0, 0, 200, 201, 5, 42, 0, 0,
-		201, 29, 1, 0, 0, 0, 202, 203, 5, 38, 0, 0, 203, 31, 1, 0, 0, 0, 204, 205,
-		5, 41, 0, 0, 205, 33, 1, 0, 0, 0, 206, 207, 5, 44, 0, 0, 207, 35, 1, 0,
-		0, 0, 208, 209, 5, 43, 0, 0, 209, 37, 1, 0, 0, 0, 210, 211, 5, 46, 0, 0,
-		211, 39, 1, 0, 0, 0, 212, 213, 5, 47, 0, 0, 213, 41, 1, 0, 0, 0, 214, 215,
+		0, 0, 188, 187, 1, 0, 0, 0, 189, 17, 1, 0, 0, 0, 190, 191, 5, 35, 0, 0,
+		191, 19, 1, 0, 0, 0, 192, 193, 5, 36, 0, 0, 193, 21, 1, 0, 0, 0, 194, 195,
+		5, 44, 0, 0, 195, 23, 1, 0, 0, 0, 196, 197, 5, 38, 0, 0, 197, 25, 1, 0,
+		0, 0, 198, 199, 5, 39, 0, 0, 199, 27, 1, 0, 0, 0, 200, 201, 5, 41, 0, 0,
+		201, 29, 1, 0, 0, 0, 202, 203, 5, 37, 0, 0, 203, 31, 1, 0, 0, 0, 204, 205,
+		5, 40, 0, 0, 205, 33, 1, 0, 0, 0, 206, 207, 5, 43, 0, 0, 207, 35, 1, 0,
+		0, 0, 208, 209, 5, 42, 0, 0, 209, 37, 1, 0, 0, 0, 210, 211, 5, 45, 0, 0,
+		211, 39, 1, 0, 0, 0, 212, 213, 5, 46, 0, 0, 213, 41, 1, 0, 0, 0, 214, 215,
 		3, 120, 60, 0, 215, 216, 3, 100, 50, 0, 216, 217, 3, 44, 22, 0, 217, 218,
 		3, 58, 29, 0, 218, 219, 3, 122, 61, 0, 219, 43, 1, 0, 0, 0, 220, 223, 3,
 		72, 36, 0, 221, 223, 3, 74, 37, 0, 222, 220, 1, 0, 0, 0, 222, 221, 1, 0,
 		0, 0, 223, 45, 1, 0, 0, 0, 224, 226, 3, 42, 21, 0, 225, 224, 1, 0, 0, 0,
 		226, 227, 1, 0, 0, 0, 227, 225, 1, 0, 0, 0, 227, 228, 1, 0, 0, 0, 228,
-		47, 1, 0, 0, 0, 229, 230, 5, 50, 0, 0, 230, 49, 1, 0, 0, 0, 231, 232, 5,
-		51, 0, 0, 232, 51, 1, 0, 0, 0, 233, 234, 5, 52, 0, 0, 234, 53, 1, 0, 0,
+		47, 1, 0, 0, 0, 229, 230, 5, 49, 0, 0, 230, 49, 1, 0, 0, 0, 231, 232, 5,
+		50, 0, 0, 232, 51, 1, 0, 0, 0, 233, 234, 5, 51, 0, 0, 234, 53, 1, 0, 0,
 		0, 235, 236, 6, 27, -1, 0, 236, 237, 3, 120, 60, 0, 237, 238, 3, 54, 27,
 		0, 238, 239, 3, 122, 61, 0, 239, 242, 1, 0, 0, 0, 240, 242, 3, 56, 28,
 		0, 241, 235, 1, 0, 0, 0, 241, 240, 1, 0, 0, 0, 242, 257, 1, 0, 0, 0, 243,
@@ -180,18 +180,18 @@ func aciparserParserInit() {
 		0, 253, 254, 1, 0, 0, 0, 254, 256, 1, 0, 0, 0, 255, 243, 1, 0, 0, 0, 256,
 		259, 1, 0, 0, 0, 257, 255, 1, 0, 0, 0, 257, 258, 1, 0, 0, 0, 258, 55, 1,
 		0, 0, 0, 259, 257, 1, 0, 0, 0, 260, 261, 3, 76, 38, 0, 261, 262, 3, 62,
-		31, 0, 262, 263, 3, 58, 29, 0, 263, 57, 1, 0, 0, 0, 264, 270, 5, 54, 0,
-		0, 265, 266, 3, 60, 30, 0, 266, 267, 5, 54, 0, 0, 267, 269, 1, 0, 0, 0,
+		31, 0, 262, 263, 3, 58, 29, 0, 263, 57, 1, 0, 0, 0, 264, 270, 5, 53, 0,
+		0, 265, 266, 3, 60, 30, 0, 266, 267, 5, 53, 0, 0, 267, 269, 1, 0, 0, 0,
 		268, 265, 1, 0, 0, 0, 269, 272, 1, 0, 0, 0, 270, 268, 1, 0, 0, 0, 270,
 		271, 1, 0, 0, 0, 271, 59, 1, 0, 0, 0, 272, 270, 1, 0, 0, 0, 273, 274, 5,
-		34, 0, 0, 274, 61, 1, 0, 0, 0, 275, 282, 3, 72, 36, 0, 276, 282, 3, 74,
+		33, 0, 0, 274, 61, 1, 0, 0, 0, 275, 282, 3, 72, 36, 0, 276, 282, 3, 74,
 		37, 0, 277, 282, 3, 64, 32, 0, 278, 282, 3, 66, 33, 0, 279, 282, 3, 68,
 		34, 0, 280, 282, 3, 70, 35, 0, 281, 275, 1, 0, 0, 0, 281, 276, 1, 0, 0,
 		0, 281, 277, 1, 0, 0, 0, 281, 278, 1, 0, 0, 0, 281, 279, 1, 0, 0, 0, 281,
-		280, 1, 0, 0, 0, 282, 63, 1, 0, 0, 0, 283, 284, 5, 29, 0, 0, 284, 65, 1,
-		0, 0, 0, 285, 286, 5, 30, 0, 0, 286, 67, 1, 0, 0, 0, 287, 288, 5, 31, 0,
-		0, 288, 69, 1, 0, 0, 0, 289, 290, 5, 32, 0, 0, 290, 71, 1, 0, 0, 0, 291,
-		292, 5, 27, 0, 0, 292, 73, 1, 0, 0, 0, 293, 294, 5, 28, 0, 0, 294, 75,
+		280, 1, 0, 0, 0, 282, 63, 1, 0, 0, 0, 283, 284, 5, 28, 0, 0, 284, 65, 1,
+		0, 0, 0, 285, 286, 5, 29, 0, 0, 286, 67, 1, 0, 0, 0, 287, 288, 5, 30, 0,
+		0, 288, 69, 1, 0, 0, 0, 289, 290, 5, 31, 0, 0, 290, 71, 1, 0, 0, 0, 291,
+		292, 5, 26, 0, 0, 292, 73, 1, 0, 0, 0, 293, 294, 5, 27, 0, 0, 294, 75,
 		1, 0, 0, 0, 295, 307, 3, 78, 39, 0, 296, 307, 3, 80, 40, 0, 297, 307, 3,
 		82, 41, 0, 298, 307, 3, 84, 42, 0, 299, 307, 3, 86, 43, 0, 300, 307, 3,
 		88, 44, 0, 301, 307, 3, 90, 45, 0, 302, 307, 3, 92, 46, 0, 303, 307, 3,
@@ -217,10 +217,10 @@ func aciparserParserInit() {
 		5, 15, 0, 0, 348, 109, 1, 0, 0, 0, 349, 350, 5, 16, 0, 0, 350, 111, 1,
 		0, 0, 0, 351, 352, 5, 17, 0, 0, 352, 113, 1, 0, 0, 0, 353, 354, 5, 18,
 		0, 0, 354, 115, 1, 0, 0, 0, 355, 356, 5, 19, 0, 0, 356, 117, 1, 0, 0, 0,
-		357, 358, 5, 20, 0, 0, 358, 119, 1, 0, 0, 0, 359, 360, 5, 23, 0, 0, 360,
-		121, 1, 0, 0, 0, 361, 362, 5, 24, 0, 0, 362, 123, 1, 0, 0, 0, 363, 364,
-		5, 25, 0, 0, 364, 125, 1, 0, 0, 0, 365, 366, 5, 26, 0, 0, 366, 127, 1,
-		0, 0, 0, 367, 368, 5, 35, 0, 0, 368, 129, 1, 0, 0, 0, 369, 370, 5, 54,
+		357, 358, 5, 20, 0, 0, 358, 119, 1, 0, 0, 0, 359, 360, 5, 22, 0, 0, 360,
+		121, 1, 0, 0, 0, 361, 362, 5, 23, 0, 0, 362, 123, 1, 0, 0, 0, 363, 364,
+		5, 24, 0, 0, 364, 125, 1, 0, 0, 0, 365, 366, 5, 25, 0, 0, 366, 127, 1,
+		0, 0, 0, 367, 368, 5, 34, 0, 0, 368, 129, 1, 0, 0, 0, 369, 370, 5, 53,
 		0, 0, 370, 131, 1, 0, 0, 0, 15, 136, 143, 163, 170, 188, 222, 227, 241,
 		247, 253, 257, 270, 281, 306, 339,
 	}
@@ -281,41 +281,40 @@ const (
 	ACIParserTKW_AF        = 18
 	ACIParserTKW_CTRL      = 19
 	ACIParserTKW_EXTOP     = 20
-	ACIParserPARENT        = 21
-	ACIParserDQUOTE        = 22
-	ACIParserLPAREN        = 23
-	ACIParserRPAREN        = 24
-	ACIParserCOMMA         = 25
-	ACIParserSEMI          = 26
-	ACIParserEQ            = 27
-	ACIParserNE            = 28
-	ACIParserLT            = 29
-	ACIParserLE            = 30
-	ACIParserGT            = 31
-	ACIParserGE            = 32
-	ACIParserSYMBOLIC_AND  = 33
-	ACIParserSYMBOLIC_OR   = 34
-	ACIParserANCHOR        = 35
-	ACIParserREAD_PRIV     = 36
-	ACIParserWRITE_PRIV    = 37
-	ACIParserADD_PRIV      = 38
-	ACIParserCMP_PRIV      = 39
-	ACIParserSRC_PRIV      = 40
-	ACIParserDEL_PRIV      = 41
-	ACIParserPRX_PRIV      = 42
-	ACIParserEXP_PRIV      = 43
-	ACIParserIMP_PRIV      = 44
-	ACIParserSLF_PRIV      = 45
-	ACIParserALL_PRIV      = 46
-	ACIParserNO_PRIV       = 47
-	ACIParserALLOW         = 48
-	ACIParserDENY          = 49
-	ACIParserWORD_AND      = 50
-	ACIParserWORD_OR       = 51
-	ACIParserWORD_NOT      = 52
-	ACIParserNCTF_TO_WHSP  = 53
-	ACIParserQUOTED_STRING = 54
-	ACIParserWS            = 55
+	ACIParserDQUOTE        = 21
+	ACIParserLPAREN        = 22
+	ACIParserRPAREN        = 23
+	ACIParserCOMMA         = 24
+	ACIParserSEMI          = 25
+	ACIParserEQ            = 26
+	ACIParserNE            = 27
+	ACIParserLT            = 28
+	ACIParserLE            = 29
+	ACIParserGT            = 30
+	ACIParserGE            = 31
+	ACIParserSYMBOLIC_AND  = 32
+	ACIParserSYMBOLIC_OR   = 33
+	ACIParserANCHOR        = 34
+	ACIParserREAD_PRIV     = 35
+	ACIParserWRITE_PRIV    = 36
+	ACIParserADD_PRIV      = 37
+	ACIParserCMP_PRIV      = 38
+	ACIParserSRC_PRIV      = 39
+	ACIParserDEL_PRIV      = 40
+	ACIParserPRX_PRIV      = 41
+	ACIParserEXP_PRIV      = 42
+	ACIParserIMP_PRIV      = 43
+	ACIParserSLF_PRIV      = 44
+	ACIParserALL_PRIV      = 45
+	ACIParserNO_PRIV       = 46
+	ACIParserALLOW         = 47
+	ACIParserDENY          = 48
+	ACIParserWORD_AND      = 49
+	ACIParserWORD_OR       = 50
+	ACIParserWORD_NOT      = 51
+	ACIParserNCTF_TO_WHSP  = 52
+	ACIParserQUOTED_STRING = 53
+	ACIParserWS            = 54
 )
 
 // ACIParser rules.
@@ -325,7 +324,7 @@ const (
 	ACIParserRULE_instructionAnchor                       = 2
 	ACIParserRULE_permissionBindRule                      = 3
 	ACIParserRULE_permission                              = 4
-	ACIParserRULE_permissionDisposition                   = 5
+	ACIParserRULE_disposition                             = 5
 	ACIParserRULE_grantedPermission                       = 6
 	ACIParserRULE_withheldPermission                      = 7
 	ACIParserRULE_privilege                               = 8
@@ -1045,7 +1044,7 @@ type IPermissionContext interface {
 	GetParser() antlr.Parser
 
 	// Getter signatures
-	PermissionDisposition() IPermissionDispositionContext
+	Disposition() IDispositionContext
 	OpeningParenthesis() IOpeningParenthesisContext
 	AllPrivilege() []IPrivilegeContext
 	Privilege(i int) IPrivilegeContext
@@ -1089,10 +1088,10 @@ func NewPermissionContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 
 func (s *PermissionContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *PermissionContext) PermissionDisposition() IPermissionDispositionContext {
+func (s *PermissionContext) Disposition() IDispositionContext {
 	var t antlr.RuleContext
 	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IPermissionDispositionContext); ok {
+		if _, ok := ctx.(IDispositionContext); ok {
 			t = ctx.(antlr.RuleContext)
 			break
 		}
@@ -1102,7 +1101,7 @@ func (s *PermissionContext) PermissionDisposition() IPermissionDispositionContex
 		return nil
 	}
 
-	return t.(IPermissionDispositionContext)
+	return t.(IDispositionContext)
 }
 
 func (s *PermissionContext) OpeningParenthesis() IOpeningParenthesisContext {
@@ -1247,7 +1246,7 @@ func (p *ACIParser) Permission() (localctx IPermissionContext) {
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(155)
-		p.PermissionDisposition()
+		p.Disposition()
 	}
 	{
 		p.SetState(156)
@@ -1299,8 +1298,8 @@ errorExit:
 	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
-// IPermissionDispositionContext is an interface to support dynamic dispatch.
-type IPermissionDispositionContext interface {
+// IDispositionContext is an interface to support dynamic dispatch.
+type IDispositionContext interface {
 	antlr.ParserRuleContext
 
 	// GetParser returns the parser.
@@ -1310,43 +1309,43 @@ type IPermissionDispositionContext interface {
 	GrantedPermission() IGrantedPermissionContext
 	WithheldPermission() IWithheldPermissionContext
 
-	// IsPermissionDispositionContext differentiates from other interfaces.
-	IsPermissionDispositionContext()
+	// IsDispositionContext differentiates from other interfaces.
+	IsDispositionContext()
 }
 
-type PermissionDispositionContext struct {
+type DispositionContext struct {
 	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
-func NewEmptyPermissionDispositionContext() *PermissionDispositionContext {
-	var p = new(PermissionDispositionContext)
+func NewEmptyDispositionContext() *DispositionContext {
+	var p = new(DispositionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = ACIParserRULE_permissionDisposition
+	p.RuleIndex = ACIParserRULE_disposition
 	return p
 }
 
-func InitEmptyPermissionDispositionContext(p *PermissionDispositionContext) {
+func InitEmptyDispositionContext(p *DispositionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = ACIParserRULE_permissionDisposition
+	p.RuleIndex = ACIParserRULE_disposition
 }
 
-func (*PermissionDispositionContext) IsPermissionDispositionContext() {}
+func (*DispositionContext) IsDispositionContext() {}
 
-func NewPermissionDispositionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PermissionDispositionContext {
-	var p = new(PermissionDispositionContext)
+func NewDispositionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *DispositionContext {
+	var p = new(DispositionContext)
 
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = ACIParserRULE_permissionDisposition
+	p.RuleIndex = ACIParserRULE_disposition
 
 	return p
 }
 
-func (s *PermissionDispositionContext) GetParser() antlr.Parser { return s.parser }
+func (s *DispositionContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *PermissionDispositionContext) GrantedPermission() IGrantedPermissionContext {
+func (s *DispositionContext) GrantedPermission() IGrantedPermissionContext {
 	var t antlr.RuleContext
 	for _, ctx := range s.GetChildren() {
 		if _, ok := ctx.(IGrantedPermissionContext); ok {
@@ -1362,7 +1361,7 @@ func (s *PermissionDispositionContext) GrantedPermission() IGrantedPermissionCon
 	return t.(IGrantedPermissionContext)
 }
 
-func (s *PermissionDispositionContext) WithheldPermission() IWithheldPermissionContext {
+func (s *DispositionContext) WithheldPermission() IWithheldPermissionContext {
 	var t antlr.RuleContext
 	for _, ctx := range s.GetChildren() {
 		if _, ok := ctx.(IWithheldPermissionContext); ok {
@@ -1378,29 +1377,29 @@ func (s *PermissionDispositionContext) WithheldPermission() IWithheldPermissionC
 	return t.(IWithheldPermissionContext)
 }
 
-func (s *PermissionDispositionContext) GetRuleContext() antlr.RuleContext {
+func (s *DispositionContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
 
-func (s *PermissionDispositionContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+func (s *DispositionContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *PermissionDispositionContext) EnterRule(listener antlr.ParseTreeListener) {
+func (s *DispositionContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(ACIParserListener); ok {
-		listenerT.EnterPermissionDisposition(s)
+		listenerT.EnterDisposition(s)
 	}
 }
 
-func (s *PermissionDispositionContext) ExitRule(listener antlr.ParseTreeListener) {
+func (s *DispositionContext) ExitRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(ACIParserListener); ok {
-		listenerT.ExitPermissionDisposition(s)
+		listenerT.ExitDisposition(s)
 	}
 }
 
-func (p *ACIParser) PermissionDisposition() (localctx IPermissionDispositionContext) {
-	localctx = NewPermissionDispositionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 10, ACIParserRULE_permissionDisposition)
+func (p *ACIParser) Disposition() (localctx IDispositionContext) {
+	localctx = NewDispositionContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 10, ACIParserRULE_disposition)
 	p.SetState(170)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {

@@ -50,11 +50,11 @@ func (s *BaseACIParserListener) EnterPermission(ctx *PermissionContext) {}
 // ExitPermission is called when production permission is exited.
 func (s *BaseACIParserListener) ExitPermission(ctx *PermissionContext) {}
 
-// EnterPermissionDisposition is called when production permissionDisposition is entered.
-func (s *BaseACIParserListener) EnterPermissionDisposition(ctx *PermissionDispositionContext) {}
+// EnterDisposition is called when production disposition is entered.
+func (s *BaseACIParserListener) EnterDisposition(ctx *DispositionContext) {}
 
-// ExitPermissionDisposition is called when production permissionDisposition is exited.
-func (s *BaseACIParserListener) ExitPermissionDisposition(ctx *PermissionDispositionContext) {}
+// ExitDisposition is called when production disposition is exited.
+func (s *BaseACIParserListener) ExitDisposition(ctx *DispositionContext) {}
 
 // EnterGrantedPermission is called when production grantedPermission is entered.
 func (s *BaseACIParserListener) EnterGrantedPermission(ctx *GrantedPermissionContext) {}
