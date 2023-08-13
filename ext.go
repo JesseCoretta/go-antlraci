@@ -287,25 +287,45 @@ func (r Instruction) String() string {
 	return str
 }
 
+/*
+ParseTargetRule parses a single target rule expression, e.g.: 'targetattr = "cn"',
+and returns a *Rule instance alongside an error.
+*/
+func ParseTargetRule(raw string) (T *Rule, err error) {
+        p, err := initAntlr(raw)
+        if err != nil {
+                return
+        }
+
+        // Parse and return our BindRules instance, which
+        // (hopefully) contains one (1) or more Bind Rule(s).
+        return processTargetRule(p.TargetRule())
+}
+
 func processTargetRule(itrc ITargetRuleContext) (T *Rule, err error) {
 	if itrc == nil {
 		err = errorf("%T instance is nil; cannot proceed", itrc)
+		return
 	}
 
 	ct := itrc.GetChildCount()
 	T = new(Rule)
 
 	for k := 0; k < ct; k++ {
+		var ok bool
+
 		switch tv := itrc.GetChild(k).(type) {
 
 		case *TargetKeywordContext:
-			if kw, ok := processRuleKeyword(tv); ok {
-				T.Keyword = kw
+			if T.Keyword, ok = processRuleKeyword(tv); !ok {
+				err = errorf("Failed to process %T for Target Rule keyword", tv)
+				return
 			}
 
 		case *TargetOperatorContext:
-			if op, ok := processRuleOperator(tv); ok {
-				T.Operator = op
+			if T.Operator, ok = processRuleOperator(tv); !ok {
+				err = errorf("Failed to process %T for Target Rule operator", tv)
+				return
 			}
 
 		case *ExpressionValuesContext:
@@ -580,6 +600,21 @@ func processBooleanWord(word any) (w BooleanWord, ok bool) {
 	}
 
 	return
+}
+
+/*
+ParseBindRule parses a single bind rule expression, e.g.: 'userdn = "ldap:///anyone"',
+and returns a *Rule instance alongside an error.
+*/
+func ParseBindRule(raw string) (T *Rule, err error) {
+        p, err := initAntlr(raw)
+        if err != nil {
+                return
+        }
+
+        // Parse and return our BindRules instance, which
+        // (hopefully) contains one (1) or more Bind Rule(s).
+        return processBindRule(p.BindRule())
 }
 
 /*
