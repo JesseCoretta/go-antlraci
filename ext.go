@@ -98,6 +98,10 @@ single keyword, operator and the expression value(s) -- that
 within a parenthetical stack.
 */
 type Rule struct {
+	// kind merely identifies the instance as 1 for a Bind
+	// Rule, or 2 for a Target Rule.
+	kind int
+
 	// the keyword shall define whether the rule is a
 	// target or a bind.
 	Keyword string
@@ -301,14 +305,14 @@ func ParseTargetRule(raw string) (T *Rule, err error) {
 	return processTargetRule(p.TargetRule())
 }
 
-func processTargetRule(itrc ITargetRuleContext) (T *Rule, err error) {
+func processTargetRule(itrc ITargetRuleContext) (r *Rule, err error) {
 	if itrc == nil {
 		err = errorf("%T instance is nil; cannot proceed", itrc)
 		return
 	}
 
 	ct := itrc.GetChildCount()
-	T = new(Rule)
+	r = new(Rule)
 
 	for k := 0; k < ct; k++ {
 		var ok bool
@@ -316,27 +320,33 @@ func processTargetRule(itrc ITargetRuleContext) (T *Rule, err error) {
 		switch tv := itrc.GetChild(k).(type) {
 
 		case *TargetKeywordContext:
-			if T.Keyword, ok = processRuleKeyword(tv); !ok {
+			if r.Keyword, ok = processRuleKeyword(tv); !ok {
 				err = errorf("Failed to process %T for Target Rule keyword", tv)
 				return
 			}
 
 		case *TargetOperatorContext:
-			if T.Operator, ok = processRuleOperator(tv); !ok {
+			if r.Operator, ok = processRuleOperator(tv); !ok {
 				err = errorf("Failed to process %T for Target Rule operator", tv)
 				return
 			}
 
 		case *ExpressionValuesContext:
-			if T.Values, err = processRuleExpression(tv); err != nil {
+			if r.Values, err = processRuleExpression(tv); err != nil {
 				return
 			}
 		}
 	}
 
-	if !ruleReady(T) {
-		err = errorf("%T is missing one of 'Keyword', 'Operator' or 'Values'; cannot proceed", T)
+	if !ruleReady(r) {
+		err = errorf("%T is missing one of 'Keyword', 'Operator' or 'Values'; cannot proceed", r)
+		r = nil
+		return
 	}
+
+	// Stamp the return as known to be a valid
+	// TARGET rule.
+	r.kind = 2
 
 	return
 }
@@ -634,15 +644,21 @@ func processBindRule(ibrc IBindRuleContext) (r *Rule, err error) {
 	// iterate child components of the bind rule:
 	// keyword, operator, value(s).
 	for k := 0; k < ct; k++ {
+		var ok bool
+
 		switch tv := ibrc.GetChild(k).(type) {
 
 		case *BindKeywordContext:
-			kw, _ := processRuleKeyword(tv)
-			r.Keyword = kw
+			if r.Keyword, ok = processRuleKeyword(tv); !ok {
+				err = errorf("Failed to process %T for Bind Rule keyword", tv)
+				return
+			}
 
 		case *BindOperatorContext:
-			op, _ := processRuleOperator(tv)
-			r.Operator = op
+			if r.Operator, ok = processRuleOperator(tv); !ok {
+				err = errorf("Failed to process %T for Bind Rule operator", tv)
+				return
+			}
 
 		case *ExpressionValuesContext:
 			if r.Values, err = processRuleExpression(tv); err != nil {
@@ -655,7 +671,13 @@ func processBindRule(ibrc IBindRuleContext) (r *Rule, err error) {
 
 	if !ruleReady(r) {
 		err = errorf("%T is missing one of 'Keyword', 'Operator' or 'Values'; cannot proceed", r)
+		r = nil
+		return
 	}
+
+	// Stamp the return as known to be a valid
+	// BIND rule.
+	r.kind = 1
 
 	return
 }
@@ -670,6 +692,22 @@ func (r Rule) String() string {
 			r.Keyword,
 			r.Operator,
 			r.Values)
+	}
+
+	return ``
+}
+
+/*
+Kind returns the string representation of the "kind" of receiver
+instance. Valid returns are `bind` for a Bind Rule, and `target`
+for a Target Rule.
+*/
+func (r Rule) Kind() string {
+	switch r.kind {
+	case 1:
+		return `bind`
+	case 2:
+		return `target`
 	}
 
 	return ``
