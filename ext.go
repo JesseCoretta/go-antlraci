@@ -360,7 +360,6 @@ func processTargetRule(itrc ITargetRuleContext) (r *Rule, err error) {
 
 	r = R
 
-
 	return
 }
 
