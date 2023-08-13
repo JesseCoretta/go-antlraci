@@ -10,6 +10,10 @@ Most of the Go codebase within this repository is **AUTO-GENERATED** through ANT
 
 At NO POINT is any portion of the **AUTO-GENERATED** ANTLR4 codebase edited for any reason whatsoever.
 
+## Status of this repository
+
+This repository is under heavy development and may not yet be suitable for mission-critical use. Certain error handlers should be added prior to any production release.
+
 ## Purpose of this repository
 
 As there are some negative views in the community regarding the quality and efficiency of the Go code that ANTLR4 generates at this time, this `antlraci` package was created to keep cyclomatic penalties wholly separate from the as-of-yet unrelease `go-aci` package, as opposed to direct integration or even through `internal` import.
@@ -29,3 +33,17 @@ For information on setting up ANTLR4 on your system, see the following resources
  - [Official ANTLR Website](http://www.antlr.org)
  - The Definitive ANTLR 4 Reference, 2nd Edition (Book)
 
+## Parser Helpers
+
+Some package-level functions have been added to simplify the parsing process for individual components of an ACIv3 instruction, as well as an instruction as a whole.
+
+ - ParseTargetRule
+ - ParseTargetRules
+ - ParseBindRule
+ - ParseBindRules
+ - ParsePermissionBindRule
+ - ParseInstruction
+
+These are defined in the separate `ext.go` file, and are not generated (nor overwritten) by the ANTLR4 codebase generation system.
+
+See the Go [documentation](https://godoc.org/github.com/JesseCoretta/go-antlraci) for usage information.
