@@ -292,14 +292,14 @@ ParseTargetRule parses a single target rule expression, e.g.: 'targetattr = "cn"
 and returns a *Rule instance alongside an error.
 */
 func ParseTargetRule(raw string) (T *Rule, err error) {
-        p, err := initAntlr(raw)
-        if err != nil {
-                return
-        }
+	p, err := initAntlr(raw)
+	if err != nil {
+		return
+	}
 
-        // Parse and return our BindRules instance, which
-        // (hopefully) contains one (1) or more Bind Rule(s).
-        return processTargetRule(p.TargetRule())
+	// Parse and return our BindRules instance, which
+	// (hopefully) contains one (1) or more Bind Rule(s).
+	return processTargetRule(p.TargetRule())
 }
 
 func processTargetRule(itrc ITargetRuleContext) (T *Rule, err error) {
@@ -607,14 +607,14 @@ ParseBindRule parses a single bind rule expression, e.g.: 'userdn = "ldap:///any
 and returns a *Rule instance alongside an error.
 */
 func ParseBindRule(raw string) (T *Rule, err error) {
-        p, err := initAntlr(raw)
-        if err != nil {
-                return
-        }
+	p, err := initAntlr(raw)
+	if err != nil {
+		return
+	}
 
-        // Parse and return our BindRules instance, which
-        // (hopefully) contains one (1) or more Bind Rule(s).
-        return processBindRule(p.BindRule())
+	// Parse and return our BindRules instance, which
+	// (hopefully) contains one (1) or more Bind Rule(s).
+	return processBindRule(p.BindRule())
 }
 
 /*
