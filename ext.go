@@ -377,7 +377,7 @@ representation of the receiver instance.
 func (r TargetRules) String() string {
 	var str []string
 	for i := 0; i < r.Len(); i++ {
-		str = append(str, sprintf("( %s )", r[i]))
+		str = append(str, sprintf("%s", r[i]))
 	}
 	return join(str, ``)
 }
@@ -703,7 +703,13 @@ of a Rule, which may be a Target Rule or a Bind Rule.
 */
 func (r *Rule) String() string {
 	if ruleReady(r) {
-		return sprintf("%s %s %s",
+		if r.kind == 1 {
+			return sprintf("%s %s %s",
+				r.Keyword,
+				r.Operator,
+				r.Values)
+		}
+		return sprintf("( %s %s %s )",
 			r.Keyword,
 			r.Operator,
 			r.Values)
