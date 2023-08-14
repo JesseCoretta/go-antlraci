@@ -682,16 +682,14 @@ func processBindRule(ibrc IBindRuleContext) (r *Rule, err error) {
 		}
 	}
 
-	// its all or nothing
-
+	// Stamp the return as known to be a valid
+	// TARGET rule, and perform the hand-off.
+	R.kind = 1
 	if !ruleReady(R) {
 		err = errorf("%T is missing one of 'Keyword', 'Operator' or 'Values'; cannot proceed", R)
 		return
 	}
 
-	// Stamp the return as known to be a valid
-	// BIND rule.
-	R.kind = 1
 	r = R
 
 	return
@@ -776,6 +774,7 @@ func processBindRules(ctx IBindRulesContext, depth int) (r BindRules, err error)
 			// (NOTE: singular component of a bind
 			// rules context)
 		case *BindRuleContext:
+			//printf("HERE: %#v\n", uv)
 			if br, _ := processBindRule(uv); br != nil {
 				r = append(r, br)
 			}
