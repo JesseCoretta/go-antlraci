@@ -6,9 +6,9 @@ import (
 
 /*
 ParseTargetRule parses a single target rule expression, e.g.: 'targetattr = "cn"',
-and returns a stackage.Condition instance alongside an error.
+and returns a *stackage.Condition instance alongside an error.
 */
-func ParseTargetRule(raw string) (r stackage.Condition, err error) {
+func ParseTargetRule(raw string) (r *stackage.Condition, err error) {
 	var p *ACIParser
 	if p, err = initAntlr(raw); err != nil {
 		return
@@ -18,7 +18,7 @@ func ParseTargetRule(raw string) (r stackage.Condition, err error) {
 	return processTargetRule(p.TargetRule())
 }
 
-func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error) {
+func processTargetRule(itrc ITargetRuleContext) (r *stackage.Condition, err error) {
 	if itrc == nil {
 		err = errorf("%T instance is nil; cannot proceed", itrc)
 		return
@@ -82,7 +82,7 @@ func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error
 }
 
 /*
-ParseTargetRules returns slices of stackage.Condition instances
+ParseTargetRules returns slices of *stackage.Condition instances
 within a stackage.Stack alongside a boolean value indicative of
 a non-zero length return result.
 
@@ -117,7 +117,7 @@ func processTargetRules(itrc ITargetRulesContext) (T stackage.Stack, err error) 
 		// A TargetRuleContext instance describes a
 		// single target rule expression [kw op expr]
 		case *TargetRuleContext:
-			var t stackage.Condition
+			var t *stackage.Condition
 			if t, err = processTargetRule(tv); err != nil {
 				return
 			}
@@ -145,15 +145,15 @@ func processTargetRules(itrc ITargetRulesContext) (T stackage.Stack, err error) 
 /*
 targetRuleUnique will scan the current slices within stackage.Stack T
 input instance and look for any preexisting Condition that bears the
-same keyword as stackage.Condition t input instance. If a match is
+same keyword as *stackage.Condition t input instance. If a match is
 found, then a false 'unique' return is sent, thereby preventing the
 push of a duplicate condition keyword. A return of true indicates the
 push attempt can proceed.
 */
-func targetRuleUnique(T stackage.Stack, t stackage.Condition) (unique bool) {
+func targetRuleUnique(T stackage.Stack, t *stackage.Condition) (unique bool) {
 	for i := 0; i < T.Len(); i++ {
 		slice, _ := T.Index(i)
-		if assert, ok := slice.(stackage.Condition); ok {
+		if assert, ok := slice.(*stackage.Condition); ok {
 			if t.Keyword() == assert.Keyword() {
 				return
 			}

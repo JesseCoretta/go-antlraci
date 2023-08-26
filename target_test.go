@@ -32,6 +32,7 @@ func TestTargetRules(t *testing.T) {
 			t.Errorf("%s failed [idx:%d]: %v", t.Name(), idx, err)
 		}
 
+		r.NoPadding(true)
 		if got := r.String(); want != got {
 			t.Errorf("%s failed [idx:%d]:\nwant '%s'\ngot  '%s'", t.Name(), idx, want, got)
 		}
