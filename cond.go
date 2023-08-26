@@ -6,25 +6,6 @@ well as RuleExpression functionality.
 */
 
 /*
-func (r *Rule) String() string {
-        if ruleReady(r) {
-                if r.kind == 1 {
-                        return sprintf("%s %s %s",
-                                r.Keyword,
-                                r.Operator,
-                                r.Values)
-                }
-                return sprintf("( %s %s %s )",
-                        r.Keyword,
-                        r.Operator,
-                        r.Values)
-        }
-
-        return ``
-}
-*/
-
-/*
 RuleExpression contains the value(s) in a Rule condition expression.
 
 In the case of multiple values, such as when parsing  'userdn' or
