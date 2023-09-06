@@ -27,13 +27,10 @@ func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error
 	var (
 		ct int = itrc.GetChildCount()
 		kw string
-		op string
 		ex RuleExpression
 	)
 
 	for k := 0; k < ct; k++ {
-		var ok bool
-
 		switch tv := itrc.GetChild(k).(type) {
 
 		case *OpeningParenthesisContext:
@@ -49,24 +46,18 @@ func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error
 			}
 
 		case *TargetKeywordContext:
-			if kw, ok = processRuleKeyword(tv); !ok {
-				err = errorf("Failed to process %T for Target Rule keyword", tv)
+			if kw, err = processRuleKeyword(tv,`target`); err != nil {
 				return
 			}
 			r.SetKeyword(kw)
 
 		case *TargetOperatorContext:
-			if op, ok = processRuleOperator(tv); !ok {
-				err = errorf("Failed to process %T for Target Rule operator", tv)
+			var kw string = r.Keyword()
+			var op stackage.ComparisonOperator
+			if op, err = processRuleOperator(tv, kw); err != nil {
 				return
 			}
-
-			cop, found := matchComparisonOperator(op)
-			if !found {
-				err = errorf("Failed to resolve %T for Target Rule operator", tv)
-				return
-			}
-			r.SetOperator(cop)
+			r.SetOperator(op)
 
 		case *ExpressionValuesContext:
 			if ex, err = processRuleExpression(tv); err != nil {
@@ -76,8 +67,18 @@ func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error
 		}
 	}
 
-	r.Paren(true).
-		SetCategory(`target`)
+        // Perform a basic go-stackage validity check ...
+        if err = r.Valid(); err == nil {
+                // No error: stamp the return as known to
+                // be a valid TargetRule, and engage the
+		// parenthetical option.
+		r.SetCategory(`target`)
+		r.Paren(true)
+        } else {
+                // Some validity check failed: mark the
+                // return as an invalid TargetRule
+                r.SetCategory(`<invalid_target>`)
+        }
 
 	return
 }

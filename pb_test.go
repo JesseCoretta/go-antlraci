@@ -5,121 +5,297 @@ import (
 )
 
 /*
-testBindRulesManifest contains a collection of bind rule(s) expressions
-found within the wild as well as vendor documentation alike. Bug reports
-pertaining to the incorrect handling of expressions (particularly within
-stackage.Stack instances) should result in new additions here.
-*/
-var testBindRulesManifest map[int]string = map[int]string{
-	0:  `( groupdn = "ldap:///cn=Human Resources,dc=example,dc.com" )`,
-	1:  `( userattr = "aciurl#LDAPURL" )`,
-	2:  `( userdn = "ldap:///all" )`,
-	3:  `( userdn = "ldap:///anyone || ldap:///parent || ldap:///self" )`,
-	4:  `( userdn = "ldap:///anyone" ) AND ( ip != "192.0.2." )`,
-	5:  `( userdn = "ldap:///anyone" )`,
-	6:  `( userdn = "ldap:///self" ) AND ( ssf >= "128" )`,
-	7:  `( userdn = "ldap:///self" )`,
-	8:  `( userdn = "ldap:///uid=user,ou=People,dc=example,dc.com" )`,
-	9:  `( userdn = "ldap:///uid=user,ou=People,dc=example,dc=com" ) AND ( dayofweek = "Sun,Sat" )`,
-	10: `( userdn = "ldap:///uid=user,ou=People,dc=example,dc=com" ) AND ( timeofday >= "1800" AND timeofday < "2400" )`,
-	11: `groupdn = "ldap:///cn=DomainAdmins,ou=Groups,($dn),dc=example,dc=com"`,
-	12: `groupdn = "ldap:///cn=DomainAdmins,ou=Groups,[$dn],dc=example,dc=com"`,
-	13: `groupdn = "ldap:///cn=DomainAdmins,ou=Groups,dc=subdomain1,dc=hostedCompany1,dc=example,dc=com"`,
-	14: `groupdn = "ldap:///cn=example,ou=groups,dc=example,dc=com"`,
-	15: `userattr = "manager#USERDN"`,
-	16: `userattr = "owner#USERDN"`,
-	17: `userattr = "parent[0,1].owner#USERDN"`,
-	18: `userattr = "parent[1].manager#USERDN"`,
-	19: `userdn = "ldap:///anyone" AND ssf < "128"`,
-	20: `userdn = "ldap:///anyone"`,
-	21: `userdn = "ldap:///self" AND ssf >= "128"`,
-	22: `( ( ( userdn = "ldap:///anyone" ) AND ( ssf >= "71" ) ) AND NOT ( dayofweek = "Wed" ) )`,
-	23: `( ( userdn = "ldap:///anyone" AND ssf >= "128" ) AND NOT dayofweek = "Fri" )`,
-	24: `( authmethod = "NONE" OR authmethod = "SIMPLE" )`,
-	25: `( userdn = "ldap:///anyone" ) AND ( ip != "2001:db8::" )`,
-	26: `groupdn = "ldap:///cn=Administrators,ou=Groups,dc=example,com" AND groupdn = "ldap:///cn=Operators,ou=Groups,dc=example,com"`,
-	27: `roledn = "ldap:///cn=Human Resources,ou=People,dc=example,dc=com"`,
-	28: `userattr = "manager#USERDN"`,
-	29: `userdn = "ldap:///anyone" AND ssf >= "128" AND NOT ( dayofweek = "Fri" OR dayofweek = "Sun" )`,
-	30: `userdn = "ldap:///anyone" AND ssf >= "128" AND NOT dayofweek = "Fri"`,
-	31: `userdn = "ldap:///anyone"`,
-	32: `userdn = "ldap:///cn=Courtney Tolana,dc=example,dc=com"`,
-	33: `userdn = "ldap:///dc=example,dc=com??sub?(manager=example)"`,
-	34: `userdn = "ldap:///ou=People,dc=example,dc=com??sub?(department=Human Resources)"`,
-	35: `userdn = "ldap:///parent"`,
-	//36: `( userdn = "ldap:///anyone" ) AND NOT ( dns != "client.example.com" )`,	// FIX ME :P
-}
+TestParseBindRules iterates the testBindRulesManifest and directly executes
+the ParseBindRules package-level function using the current iteration value
+and comparing the return result with the original.
 
-/*
-TestBindRules iterates the testBindRulesManifest, parses each member value
-and compares the return result with the original.
+- Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
+
+- Odd numbered map entries are INVALID tests which SHOULD FAIL w/ an error
 */
-func TestBindRules(t *testing.T) {
+func TestParseBindRules(t *testing.T) {
 
 	ct := len(testBindRulesManifest)
+
 	var ect int
 	for idx := 0; idx < ct; idx++ {
 		want, found := testBindRulesManifest[idx]
 		if !found {
-			continue // ??
+			t.Errorf("%s failed [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+				t.Name(), idx, ct, idx)
+			return
 		}
 
 		r, err := ParseBindRules(want)
 		if err != nil {
-			t.Errorf("%s failed [idx:%d/%d]: %v", t.Name(), idx, ct, err)
+			// There was an error
+			if idx % 2 == 0 {
+				// Valid test should have worked, but did not.
+				t.Errorf("%s failed [idx:%d/%d]: %v\nwant: '%s'\ngot:  '%s'",
+					t.Name(), idx, ct, err, want, r)
+				return
+			}
+			continue
+		} else {
+			// There was no error
+			if idx % 2 != 0 {
+				// Invalid test should have failed, but did not.
+				t.Errorf("%s failed [idx:%d/%d]: invalid %T (%s) parse attempt returned no error",
+					t.Name(), idx, ct, r, r.String())
+				return
+			}
 		}
 
 		if got := r.String(); want != got {
+
+			// There was an (unexpected) result during strcmp.
 			ect++
+
+			// execute rudimentary stack dumper for
+			// troubleshooting of failed strcmp ...
 			printf("\n###################################\n")
 			printStack(r, 0)
 			printf("###################################\n")
-			t.Errorf("%s failed [idx:%d/%d]:\nwant '%s' [%d]\ngot  '%s' [%d]", t.Name(), idx, ct, want, r.Len(), got, r.Len())
+
+			t.Errorf("%s failed [idx:%d/%d]:\nwant '%s' [%d]\ngot  '%s' [%d]",
+				t.Name(), idx, ct, want, r.Len(), got, r.Len())
 		}
 	}
 
 	if ect != 0 {
 		t.Logf("%s suffered %d total errors", t.Name(), ect)
 	}
-
-}
-
-//want := `allow(read,write) ( ( ( userdn = "ldap:///anyone" ) AND ( ssf >= "71" ) ) AND NOT ( dayofweek = "Wed" OR dayofweek = "Fri" ) );`
-//r, err := parser.ParsePermissionBindRule(want)
-
-/*
-testPermissionManifest contains a collection of bind rule(s) expressions
-found within the wild as well as vendor documentation alike. Bug reports
-pertaining to the incorrect handling of expressions (particularly within
-stackage.Stack instances) should result in new additions here.
-*/
-var testPermissionManifest map[int]string = map[int]string{
-	0: `allow(read,write)`,
-	1: `allow(read,write,compare,search,delete)`,
-	2: `deny(all)`,
-	3: `deny(proxy)`,
 }
 
 /*
-TestPermission iterates the testPermissionManifest, parses each member value
-and compares the return result with the original.
-*/
-func TestPermission(t *testing.T) {
+TestParseBindRule tests the direct execution of the *singular* ParseBindRule
+package-level function.
 
-	for idx := 0; idx < len(testPermissionManifest); idx++ {
-		want, found := testPermissionManifest[idx]
+A BindRule is a statement of the following syntax:
+
+                                             Available expression values/contexts
+                                        ----------------------------------------------
+     One (1) Bind Keyword        +----- Allows LDAP DistinguishedName/URI abstracts,
+  +---------------------------+ /       possibly in a multi-valued context
+  | userdn,  groupdn, roledn, |+
+  +---------------------------+         Allows network/mechanism/confidential
+  | ip, dns, ssf, authmethod, |+------- abstract contexts
+  +---------------------------+
+  | userattr, groupattr,      |+------- Allows composite attr/val value-matching
+  +---------------------------+         statements, possibly enveloped as a URI
+  | timeofday or dayofweek    |+        or basic attributeBindTypeOrValue context
+  +---------------------------+ \
+      |                          +----- Allows temporal contexts
+      |    <comparison                     
+  <keyword> operator> <expression>                 ^
+         ______|______        \                    |
+        /  |  | |  |  \        See expression descriptions
+       EQ LE LT GT GE NE
+
+- Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
+
+- Odd numbered map entries are INVALID tests which SHOULD FAIL w/ an error
+*/
+func TestParseBindRule(t *testing.T) {
+	ct := len(testBindRuleIndices)
+
+	for i := 0; i < ct; i++ {
+		idx := testBindRuleIndices[i]
+		want, found := testBindRulesManifest[idx]
 		if !found {
-			continue // ??
+			continue // don't error, just skip ahead.
 		}
 
-		r, err := ParsePermission(want)
-		if err != nil {
-			t.Errorf("%s failed [idx:%d]: %v", t.Name(), idx, err)
+	        r, err := ParseBindRule(want)
+	        if err != nil {
+			// There was an error ...
+			if idx % 2 == 0 || idx == 0 {
+				// Valid test should have worked, but did not ...
+				t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: err:%v\nwant: '%s'\ngot:  '%s'",
+					t.Name(), idx, i, ct, err, want, r)
+				return
+			}
+			continue
+	        } else {
+			// There was no error ...
+			if idx % 2 != 0 {
+				// Invalid test should have failed, but did not ...
+				t.Errorf("%s [INVALID] failed [idx[%d]::%d/%d]: %T (%s) parse attempt returned no error",
+					t.Name(), idx, i, ct, r, want)
+				return
+			}
 		}
 
 		if got := r.String(); want != got {
-			t.Errorf("%s failed [idx:%d]:\nwant '%s'\ngot  '%s'", t.Name(), idx, want, got)
+			// There was an (unexpected) result during strcmp.
+			t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]:\nwant '%s'\ngot  '%s'",
+				t.Name(), idx, i, ct, want, got)
+			return
+		}
+	}
+}
+
+/*
+TestPermissions iterates the testPermissionManifest, and execting the ParsePermission
+package-level function using each member as input, and then comparing the return result
+with the original.
+
+- Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
+
+- Odd numbered map entries are INVALID tests which SHOULD FAIL w/ an error
+*/
+func TestParsePermissions(t *testing.T) {
+
+	ct := len(testPermissionManifest)
+
+	for idx := 0; idx < ct; idx++ {
+                want, found := testPermissionManifest[idx]
+                if !found {
+                        t.Errorf("%s failed [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+                                t.Name(), idx, ct, idx)
+                        return
+                }
+
+		r, err := ParsePermission(want)
+		if err != nil {
+			// There was an error ...
+			if idx % 2 == 0 || idx == 0 {
+				// Valid test should have worked, but did not ...
+				t.Errorf("%s failed [idx:%d/%d]: err:%v",
+					t.Name(), idx, ct, err)
+				return
+			}
+			continue // if it was supposed to fail, skip ahead
+		} else {
+			// There was no error ...
+			if idx % 2 != 0 {
+				// Invalid test should have failed, but did not ...
+				t.Errorf("%s failed [idx:%d/%d: no error returned for bogus value [%s]",
+					t.Name(), idx, ct, want)
+				return
+			}
+		}
+
+		if got := r.String(); want != got {
+			// There was an (unexpected) result during strcmp.
+			t.Errorf("%s failed [idx:%d/%d]:\nwant '%s'\ngot  '%s'",
+				t.Name(), idx, ct, want, got)
+			return
 		}
 	}
 
 }
+
+/*
+TestPermissionBindRule tests the direct execution of the ParsePermissionBindRule
+package level function. A PermissionBindRule is a statement of the following syntax:
+
+                 delimited  ASCII           ASCII
+                 privilege   #32              #59
+     allow/deny    names      |                |
+         |           |        |                |
+  [ disposition (right,...)  WHSP [BindRules]  ; ]
+   ------------------------   |   -----------   \
+          Permission          |    BindRules     \
+                               \                  terminator
+                                \
+                            seperator
+
+- Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
+
+- Odd numbered map entries are INVALID tests which SHOULD FAIL w/ an error
+*/
+func TestParsePermissionBindRule(t *testing.T) {
+	ct := len(testPermissionBindRuleManifest)
+
+	var err error
+	for idx := 0; idx < ct; idx++ {
+		want, found := testPermissionBindRuleManifest[idx]
+                if !found {
+                        t.Errorf("%s [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+                                t.Name(), idx, ct, idx)
+                        return
+		}
+
+		var got PermissionBindRule
+		if got, err = ParsePermissionBindRule(want); err != nil {
+			// There was an error ...
+			if idx % 2 == 0 || idx == 0 {
+				// Valid test should have worked, but did not ...
+				t.Errorf("%s [VALID] failed [idx:%d/%d]: err:%v",
+					t.Name(), idx, ct, err)
+				return
+			}
+
+			continue // if it was supposed to fail, skip ahead
+		}
+
+		// There was no error ...
+		if idx % 2 != 0 {
+			// Invalid test should have failed, but did not ...
+			t.Errorf("%s [INVALID] failed [idx:%d/%d]: %T parse returned no error",
+				t.Name(), idx, ct, got)
+			return
+		}
+
+		if got.String() != want {
+			// There was an (unexpected) result during strcmp.
+                        t.Errorf("%s [VALID] failed [idx:%d/%d]: unexpected result;\nwant '%s'\ngot  '%s'",
+				t.Name(), idx, ct, want, got)
+			return
+		}
+	}
+}
+
+/*
+// ready in 0.0.1-alpha.0+
+
+- Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
+
+- Odd numbered map entries are INVALID tests which SHOULD FAIL w/ an error
+*/
+/*
+func TestPermissionBindRules(t *testing.T) {
+        ct := len(testPermissionBindRulesManifest)
+
+        var err error
+        for idx := 0; idx < ct; idx++ {
+                wanted, found := testPermissionBindRulesManifest[idx]
+                if !found {
+                        t.Errorf("%s [idx[%d]::%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+                                t.Name(), idx, idx+1, ct, idx)
+                        return
+                }
+
+		want := join(wanted, string(rune(32)))
+
+                got := newStack()
+                if got, err = ParsePermissionBindRules(want); err != nil {
+                        // There was an error ...
+                        if idx % 2 == 0 {
+                                // Valid test should have worked, but did not ...
+                                t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: err:%v",
+                                        t.Name(), idx, idx+1, ct, err)
+                                return
+                        }
+
+                        continue // if it was supposed to fail, skip ahead
+                }
+
+                // There was no error ...
+                if idx % 2 != 0 {
+                        // Invalid test should have failed, but did not ...
+                        t.Errorf("%s [INVALID] failed [idx[%d]::%d/%d]: invalid %T parse returned no error",
+                                t.Name(), idx, idx+1, ct, got)
+                        return
+                }
+
+                if got.String() != want {
+                        // There was an (unexpected) result during strcmp.
+                        t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: unexpected result;\nwant '%s'\ngot  '%s'",
+                                t.Name(), idx, idx+1, ct, want, got)
+                        return
+                }
+        }
+}
+*/

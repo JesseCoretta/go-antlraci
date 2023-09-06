@@ -5,38 +5,49 @@ import (
 )
 
 /*
-testInstructionManifest contains a collection of bind rule(s) expressions
-found within the wild as well as vendor documentation alike. Bug reports
-pertaining to the incorrect handling of expressions (particularly within
-stackage.Stack instances) should result in new additions here.
-*/
-var testInstructionManifest map[int]string = map[int]string{
-	0: `(targetfilter="(&(objectClass=employee)(objectClass=engineering))")(targetcontrol="1.2.3.4" || "5.6.7.8")(targetscope="onelevel")(version 3.0; acl "Allow read and write for anyone using greater than or equal 128 SSF - extra nesting"; allow(read,write) ( ( ( userdn = "ldap:///anyone" ) AND ( ssf >= "71" ) ) AND NOT ( dayofweek = "Wed" OR dayofweek = "Fri" ) );)`,
-}
-
-/*
 TestInstruction iterates the testInstructionManifest, parses each member value
 and compares the return result with the original.
 */
 func TestInstruction(t *testing.T) {
+	ct := len(testInstructionManifest)
 
-	for idx := 0; idx < len(testInstructionManifest); idx++ {
-		//want, found := testInstructionManifest[idx]
-		_, found := testInstructionManifest[idx]
-		if !found {
-			continue // ??
+	for idx, want := range testInstructionManifest {
+		/*
+		want, found := testInstructionManifest[idx]
+                if !found {
+                        t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+                                t.Name(), idx, idx+1, ct, idx)
+                        return
+                }
+		*/
+
+		r, err := ParseInstruction(want)
+                if err != nil {
+                        // There was an error
+                        if idx % 2 == 0 {
+                                // Valid test should have worked, but did not.
+                                t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: %v\nwant: '%s'\ngot:  '%s'",
+                                        t.Name(), idx, idx+1, ct, err, want, r)
+                                return
+                        }
+                        continue
+                } else {
+                        // There was no error
+                        if idx % 2 != 0 {
+                                // Invalid test should have failed, but did not.
+                                t.Errorf("%s [INVALID] failed [idx[%d]::%d/%d]: %T (%s) parse attempt returned no error",
+                                        t.Name(), idx, idx+1, ct, r, r.String())
+                                return
+                        }
 		}
 
-		/*
-			r, err := ParseInstruction(want)
-			if err != nil {
-				t.Errorf("%s failed [idx:%d]: %v", t.Name(), idx, err)
-			}
+                if got := r.String(); want != got {
+                        // There was an (unexpected) result during strcmp.
+                        t.Errorf("%s [VALID] failed [idx:%d/%d]:\nwant '%s'\ngot  '%s'",
+                                t.Name(), idx, ct, want, got)
+                        return
+                }
 
-			if got := r.String(); want != got {
-				t.Errorf("%s failed [idx:%d]:\nwant '%s'\ngot  '%s'", t.Name(), idx, want, got)
-			}
-		*/
 	}
 
 }

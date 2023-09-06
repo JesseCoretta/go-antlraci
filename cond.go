@@ -1,9 +1,16 @@
 package antlraci
 
+import (
+	"github.com/JesseCoretta/go-stackage"
+)
+
 /*
 cond.go contains condition related functions and methods, as
 well as RuleExpression functionality.
 */
+
+var OperatorKeywordMap map[string][]string
+var comparisonOperatorMap map[string]stackage.ComparisonOperator
 
 /*
 RuleExpression contains the value(s) in a Rule condition expression.
@@ -54,35 +61,79 @@ func (r RuleExpression) String() string {
 	return ``
 }
 
-func processRuleKeyword(trk any) (kw string, found bool) {
+func processRuleKeyword(trk any, id string) (kw string, err error) {
+
 	switch tv := trk.(type) {
+
 	case *TargetKeywordContext:
 		if tv != nil {
 			kw = tv.GetText()
 		}
+
 	case *BindKeywordContext:
 		if tv != nil {
 			kw = tv.GetText()
 		}
 	}
 
-	found = len(kw) > 0
+	if hasPfx(kw, `<missing`) {
+		err = errorf("Zero-length or unreadable %s keyword, cannot process", id)
+		return
+	}
+
+	if ctx, known := idKW(kw); !known {
+		if kw == `(` {
+			// target rules won't match this condition, since the
+			// opening parenthesis is part of their rule structure.
+			err = errorf("Parenthetical bind rule: only bind rules (plural) should be parenthetical")
+		} else {
+			err = errorf("Unresolvable keyword [%s]", kw)
+		}
+		kw = `<invalid_target_keyword>`
+	} else if ctx != id {
+		err = errorf("Inappropriate keyword context (%s) for type '%s'", ctx, id)
+		kw = `<invalid_target_keyword>`
+	}
+
 	return
 }
 
-func processRuleOperator(bro any) (op string, found bool) {
-	switch tv := bro.(type) {
+func processRuleOperator(btro any, kw string) (cop stackage.ComparisonOperator, err error) {
+	var typ string
+	var op string = `<unidentified_keyword>`
+
+	switch tv := btro.(type) {
 	case *BindOperatorContext:
+		typ = `bind`
 		if tv != nil {
-			op = tv.GetText()
+			if keywordAllowsOperator(kw, tv.GetText()) {
+				op = tv.GetText()
+			} else {
+				err = errorf("Illegal %s keyword/operator combination ('%s' -X-> '%s')",
+					typ, kw, op)
+				return
+			}
 		}
+
 	case *TargetOperatorContext:
+		typ = `target`
 		if tv != nil {
-			op = tv.GetText()
+			if keywordAllowsOperator(kw, tv.GetText()) {
+				op = tv.GetText()
+			} else {
+				err = errorf("Illegal %s keyword/operator combination ('%s' -X-> '%s')",
+					typ, kw, op)
+				return
+			}
 		}
 	}
 
-	found = len(op) > 0
+	var found bool
+        if cop, found = matchComparisonOperator(op); !found {
+                err = errorf("Unresolvable comparison operator [%s], or not allowed for use with specified %s rule keyword [%s]",
+			op, typ, kw)
+        }
+
 	return
 }
 
@@ -99,6 +150,10 @@ func processRuleExpression(expr *ExpressionValuesContext) (r RuleExpression, err
 		return
 	}
 	raw := expr.GetText()
+	if rune(raw[0]) != rune(34) {
+		err = errorf("%T instance cannot parse; unquoted value '%v'", r, raw)
+		return
+	}
 
 	// determine the style of quotation, assuming
 	// multi-values are present
@@ -120,4 +175,86 @@ func processRuleExpression(expr *ExpressionValuesContext) (r RuleExpression, err
 	}
 
 	return
+}
+
+func keywordAllowsOperator(kw, op string) bool {
+	operators, foundkeyword := OperatorKeywordMap[kw]
+	if !foundkeyword {
+		return false
+	}
+
+	return strInSlice(op, operators)
+}
+
+func knownKeyword(kw string) (known bool) {
+	_, known = OperatorKeywordMap[kw]
+	return known
+}
+
+func idKW(kw string) (id string, known bool) {
+	id = `<unidentified_keyword_context>`
+	if known = knownKeyword(kw); !known {
+		return
+	}
+
+	if hasPfx(kw, `targ`) || kw == `extop` {
+		id = `target`
+	} else {
+		id = `bind`
+	}
+
+	return
+}
+
+func matchComparisonOperator(x string) (op stackage.ComparisonOperator, ok bool) {
+        var k string
+        for k, op = range comparisonOperatorMap {
+                if x == k {
+                        ok = true
+                        return
+                }
+        }
+
+        return
+}
+
+func init() {
+	OperatorKeywordMap = map[string][]string{
+                // target rule keyword/operators
+                `target`: []string{`=`,`!=`},
+                `target_to`: []string{`=`,`!=`},
+                `target_from`: []string{`=`,`!=`},
+                `targetcontrol`: []string{`=`,`!=`},
+                `extop`: []string{`=`,`!=`},
+                `targetattr`: []string{`=`,`!=`},
+                `targetfilter`: []string{`=`,`!=`},
+
+                // these two target rule keywords disallow negation
+                `targetscope`: []string{`=`},
+                `targattrfilters`: []string{`=`},
+
+                // bind rule keyword/operators
+                `userdn`: []string{`=`,`!=`},
+                `groupdn`: []string{`=`,`!=`},
+                `roledn`: []string{`=`,`!=`},
+                `userattr`: []string{`=`,`!=`},
+                `groupattr`: []string{`=`,`!=`},
+                `authmethod`: []string{`=`,`!=`},
+                `dayofweek`: []string{`=`,`!=`},
+                `dns`: []string{`=`,`!=`},
+                `ip`: []string{`=`,`!=`},
+
+                // these are the only two keywords (of ANY rule) that allow all operators.
+                `timeofday`: []string{`=`,`!=`,`>`,`<`,`>=`,`<=`},
+                `ssf`: []string{`=`,`!=`,`>`,`<`,`>=`,`<=`},
+        }
+
+        comparisonOperatorMap = map[string]stackage.ComparisonOperator{
+                `=`:  stackage.Eq,
+                `!=`: stackage.Ne,
+                `<`:  stackage.Lt,
+                `>`:  stackage.Gt,
+                `<=`: stackage.Le,
+                `>=`: stackage.Ge,
+        }
 }

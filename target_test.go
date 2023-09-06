@@ -5,36 +5,46 @@ import (
 )
 
 /*
-testTargetRulesManifest contains a collection of target rule(s) expressions
-found within the wild as well as vendor documentation alike. Bug reports
-pertaining to the incorrect handling of expressions (particularly within
-stackage.Stack instances) should result in new additions here.
+TestTargetRules iterates the testTargetRulesManifest, parses each
+member value and compares the return result with the original.
 */
-var testTargetRulesManifest map[int]string = map[int]string{
-	0: `( targetfilter = "(&(objectClass=employee)(objectClass=engineering))" )( targetcontrol = "1.2.3.4" || "5.6.7.8" )( targetscope = "onelevel" )`,
-	1: `( targetfilter = "(&(objectClass=employee)(objectClass=engineering))" )`,
-}
+func TestTargetRule(t *testing.T) {
 
-/*
-TestTargetRules iterates the testTargetRulesManifest, parses each member value
-and compares the return result with the original.
-*/
-func TestTargetRules(t *testing.T) {
+	ct := len(testNewTargetRuleManifest)
 
-	for idx := 0; idx < len(testTargetRulesManifest); idx++ {
-		want, found := testTargetRulesManifest[idx]
-		if !found {
-			continue // ??
-		}
+	for idx, want := range testNewTargetRuleManifest {
+		//for idx := 0; idx < ct; idx++ {
+		//want, found := testNewTargetRuleManifest[idx]
+                //if !found {
+                //       t.Errorf("%s failed [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+                //              t.Name(), idx, ct, idx)
+                //       return
+                //}
 
 		r, err := ParseTargetRules(want)
 		if err != nil {
-			t.Errorf("%s failed [idx:%d]: %v", t.Name(), idx, err)
+			// There was an error ...
+			if idx % 2 == 0 || idx == 0 {
+				// Valid test should have worked, but did not ...
+                                t.Errorf("%s [VALID] failed [idx:%d/%d]: err:%v\nwant: '%s'\ngot:  '%s'",
+                                        t.Name(), idx, ct, err, want, r)
+                                return
+			}
+			continue
+		} else {
+			// There was no error ...
+			if idx % 2 != 0 {
+                                // Invalid test should have failed, but did not ...
+                                t.Errorf("%s [INVALID] failed [idx:%d/%d]: %T (%s) parse attempt returned no error",
+                                        t.Name(), idx, ct, r, want)
+                                return
+                        }
 		}
 
 		r.NoPadding(true)
 		if got := r.String(); want != got {
-			t.Errorf("%s failed [idx:%d]:\nwant '%s'\ngot  '%s'", t.Name(), idx, want, got)
+			t.Errorf("%s failed [idx:%d/%d]:\nwant '%s'\ngot  '%s'",
+				t.Name(), idx, ct, want, got)
 		}
 	}
 

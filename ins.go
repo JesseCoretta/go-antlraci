@@ -145,9 +145,9 @@ func ParseInstruction(raw string) (i Instruction, err error) {
 	}
 
 	var (
-		T  stackage.Stack
-		L  AccessControlLabel
-		PB stackage.Stack = stackage.List()
+		T  stackage.Stack	// target rules
+		L  AccessControlLabel	// access control label
+		PB stackage.Stack	// permission bind rules
 	)
 
 	// obtain our target rules, if any were
@@ -166,6 +166,11 @@ func ParseInstruction(raw string) (i Instruction, err error) {
 	// by a single semicolon (ASCII #59). An instruction MUST have
 	// at least one (1) permission+bind statement that honors this
 	// requirement, but may contain more if needed.
+	if PB, err = processPermissionBindRules(ins.AllPermissionBindRule()); err != nil {
+		return
+	}
+
+	/*
 	for _, pbr := range ins.AllPermissionBindRule() {
 
 		var p Permission
@@ -182,6 +187,7 @@ func ParseInstruction(raw string) (i Instruction, err error) {
 
 		PB.Push(PermissionBindRule{p, b})
 	}
+	*/
 
 	return Instruction{T, L, PB}, nil
 }

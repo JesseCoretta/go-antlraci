@@ -16,11 +16,37 @@ var (
 	join    func([]string, string) string     = strings.Join
 	lc      func(string) string               = strings.ToLower
 	eq      func(string, string) bool         = strings.EqualFold
+	rplc	func(string, string, string) string = strings.ReplaceAll
 	hasPfx  func(string, string) bool         = strings.HasPrefix
 	hasSfx  func(string, string) bool         = strings.HasSuffix
 	strct   func(string, string) int          = strings.Count
 	trimS   func(string) string               = strings.TrimSpace
+	trimSfx func(string,string) string	  = strings.TrimSuffix
+	trimPfx func(string,string) string	  = strings.TrimPrefix
 )
+
+var AntlrUseStderr bool = false
+
+func strInSlice(str string, slices []string, strict ...bool) bool {
+	var matchCase bool
+	if len(strict) > 0 {
+		matchCase = strict[0]
+	}
+
+	for i := 0; i < len(slices); i++ {
+		if matchCase {
+			if str == slices[i] {
+				return true
+			}
+		} else {
+			if eq(str,slices[i]) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
 
 func initAntlr(raw string) (p *ACIParser, err error) {
 	// don't waste time on a zero string ...
@@ -34,12 +60,19 @@ func initAntlr(raw string) (p *ACIParser, err error) {
 
 	// prepare lexer
 	lx := NewACILexer(is)
+	if !AntlrUseStderr {
+		lx.RemoveErrorListeners()
+	}
 
 	// Prepare the parser using a new CommonTokenStream
 	// as input, define as p, and verified for nilness.
 	if p = NewACIParser(antlr.NewCommonTokenStream(lx, 0)); p == nil {
 		err = errorf("Unknown ANTLR error; received a nil %T instance", p)
 		return
+	}
+
+	if !AntlrUseStderr {
+		p.RemoveErrorListeners()
 	}
 
 	// Declare our intent build a parse tree
@@ -202,27 +235,16 @@ func disenvelopCondition(outer stackage.Stack) (inner stackage.Condition, ok boo
 	return
 }
 
-func matchComparisonOperator(x string) (op stackage.ComparisonOperator, ok bool) {
-	var k string
-	for k, op = range comparisonOperatorMap {
-		if x == k {
-			ok = true
-			return
-		}
-	}
+/*
+trimParen strips the leading and trailing parenthetical characters
+from the input value (raw). The resulting instance is returned. No
+changes occur if not parentheticals were present at the beginning
+and/or end of the string.
 
-	return
+This is used only for BindRule instances with parentheticals, we
+wish to remove for simplified and more reliable parsing ...
+*/
+func trimParen(raw string) string {
+	return trimSfx(trimPfx(raw,`(`),`)`)
 }
 
-var comparisonOperatorMap map[string]stackage.ComparisonOperator
-
-func init() {
-	comparisonOperatorMap = map[string]stackage.ComparisonOperator{
-		`=`:  stackage.Eq,
-		`!=`: stackage.Ne,
-		`<`:  stackage.Lt,
-		`>`:  stackage.Gt,
-		`<=`: stackage.Le,
-		`>=`: stackage.Ge,
-	}
-}
