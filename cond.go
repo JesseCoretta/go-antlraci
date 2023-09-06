@@ -129,10 +129,10 @@ func processRuleOperator(btro any, kw string) (cop stackage.ComparisonOperator, 
 	}
 
 	var found bool
-        if cop, found = matchComparisonOperator(op); !found {
-                err = errorf("Unresolvable comparison operator [%s], or not allowed for use with specified %s rule keyword [%s]",
+	if cop, found = matchComparisonOperator(op); !found {
+		err = errorf("Unresolvable comparison operator [%s], or not allowed for use with specified %s rule keyword [%s]",
 			op, typ, kw)
-        }
+	}
 
 	return
 }
@@ -207,54 +207,54 @@ func idKW(kw string) (id string, known bool) {
 }
 
 func matchComparisonOperator(x string) (op stackage.ComparisonOperator, ok bool) {
-        var k string
-        for k, op = range comparisonOperatorMap {
-                if x == k {
-                        ok = true
-                        return
-                }
-        }
+	var k string
+	for k, op = range comparisonOperatorMap {
+		if x == k {
+			ok = true
+			return
+		}
+	}
 
-        return
+	return
 }
 
 func init() {
 	OperatorKeywordMap = map[string][]string{
-                // target rule keyword/operators
-                `target`: []string{`=`,`!=`},
-                `target_to`: []string{`=`,`!=`},
-                `target_from`: []string{`=`,`!=`},
-                `targetcontrol`: []string{`=`,`!=`},
-                `extop`: []string{`=`,`!=`},
-                `targetattr`: []string{`=`,`!=`},
-                `targetfilter`: []string{`=`,`!=`},
+		// target rule keyword/operators
+		`target`:        {`=`, `!=`},
+		`target_to`:     {`=`, `!=`},
+		`target_from`:   {`=`, `!=`},
+		`targetcontrol`: {`=`, `!=`},
+		`extop`:         {`=`, `!=`},
+		`targetattr`:    {`=`, `!=`},
+		`targetfilter`:  {`=`, `!=`},
 
-                // these two target rule keywords disallow negation
-                `targetscope`: []string{`=`},
-                `targattrfilters`: []string{`=`},
+		// these two target rule keywords disallow negation
+		`targetscope`:     {`=`},
+		`targattrfilters`: {`=`},
 
-                // bind rule keyword/operators
-                `userdn`: []string{`=`,`!=`},
-                `groupdn`: []string{`=`,`!=`},
-                `roledn`: []string{`=`,`!=`},
-                `userattr`: []string{`=`,`!=`},
-                `groupattr`: []string{`=`,`!=`},
-                `authmethod`: []string{`=`,`!=`},
-                `dayofweek`: []string{`=`,`!=`},
-                `dns`: []string{`=`,`!=`},
-                `ip`: []string{`=`,`!=`},
+		// bind rule keyword/operators
+		`userdn`:     {`=`, `!=`},
+		`groupdn`:    {`=`, `!=`},
+		`roledn`:     {`=`, `!=`},
+		`userattr`:   {`=`, `!=`},
+		`groupattr`:  {`=`, `!=`},
+		`authmethod`: {`=`, `!=`},
+		`dayofweek`:  {`=`, `!=`},
+		`dns`:        {`=`, `!=`},
+		`ip`:         {`=`, `!=`},
 
-                // these are the only two keywords (of ANY rule) that allow all operators.
-                `timeofday`: []string{`=`,`!=`,`>`,`<`,`>=`,`<=`},
-                `ssf`: []string{`=`,`!=`,`>`,`<`,`>=`,`<=`},
-        }
+		// these are the only two keywords (of ANY rule) that allow all operators.
+		`timeofday`: {`=`, `!=`, `>`, `<`, `>=`, `<=`},
+		`ssf`:       {`=`, `!=`, `>`, `<`, `>=`, `<=`},
+	}
 
-        comparisonOperatorMap = map[string]stackage.ComparisonOperator{
-                `=`:  stackage.Eq,
-                `!=`: stackage.Ne,
-                `<`:  stackage.Lt,
-                `>`:  stackage.Gt,
-                `<=`: stackage.Le,
-                `>=`: stackage.Ge,
-        }
+	comparisonOperatorMap = map[string]stackage.ComparisonOperator{
+		`=`:  stackage.Eq,
+		`!=`: stackage.Ne,
+		`<`:  stackage.Lt,
+		`>`:  stackage.Gt,
+		`<=`: stackage.Le,
+		`>=`: stackage.Ge,
+	}
 }

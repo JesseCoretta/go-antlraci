@@ -46,7 +46,7 @@ func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error
 			}
 
 		case *TargetKeywordContext:
-			if kw, err = processRuleKeyword(tv,`target`); err != nil {
+			if kw, err = processRuleKeyword(tv, `target`); err != nil {
 				return
 			}
 			r.SetKeyword(kw)
@@ -67,18 +67,18 @@ func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error
 		}
 	}
 
-        // Perform a basic go-stackage validity check ...
-        if err = r.Valid(); err == nil {
-                // No error: stamp the return as known to
-                // be a valid TargetRule, and engage the
+	// Perform a basic go-stackage validity check ...
+	if err = r.Valid(); err == nil {
+		// No error: stamp the return as known to
+		// be a valid TargetRule, and engage the
 		// parenthetical option.
 		r.SetCategory(`target`)
 		r.Paren(true)
-        } else {
-                // Some validity check failed: mark the
-                // return as an invalid TargetRule
-                r.SetCategory(`<invalid_target>`)
-        }
+	} else {
+		// Some validity check failed: mark the
+		// return as an invalid TargetRule
+		r.SetCategory(`<invalid_target>`)
+	}
 
 	return
 }

@@ -10,19 +10,19 @@ import (
 )
 
 var (
-	printf  func(string, ...any) (int, error) = fmt.Printf
-	sprintf func(string, ...any) string       = fmt.Sprintf
-	split   func(string, string) []string     = strings.Split
-	join    func([]string, string) string     = strings.Join
-	lc      func(string) string               = strings.ToLower
-	eq      func(string, string) bool         = strings.EqualFold
-	rplc	func(string, string, string) string = strings.ReplaceAll
-	hasPfx  func(string, string) bool         = strings.HasPrefix
-	hasSfx  func(string, string) bool         = strings.HasSuffix
-	strct   func(string, string) int          = strings.Count
-	trimS   func(string) string               = strings.TrimSpace
-	trimSfx func(string,string) string	  = strings.TrimSuffix
-	trimPfx func(string,string) string	  = strings.TrimPrefix
+	printf  func(string, ...any) (int, error)   = fmt.Printf
+	sprintf func(string, ...any) string         = fmt.Sprintf
+	split   func(string, string) []string       = strings.Split
+	join    func([]string, string) string       = strings.Join
+	lc      func(string) string                 = strings.ToLower
+	eq      func(string, string) bool           = strings.EqualFold
+	rplc    func(string, string, string) string = strings.ReplaceAll
+	hasPfx  func(string, string) bool           = strings.HasPrefix
+	hasSfx  func(string, string) bool           = strings.HasSuffix
+	strct   func(string, string) int            = strings.Count
+	trimS   func(string) string                 = strings.TrimSpace
+	trimSfx func(string, string) string         = strings.TrimSuffix
+	trimPfx func(string, string) string         = strings.TrimPrefix
 )
 
 var AntlrUseStderr bool = false
@@ -39,7 +39,7 @@ func strInSlice(str string, slices []string, strict ...bool) bool {
 				return true
 			}
 		} else {
-			if eq(str,slices[i]) {
+			if eq(str, slices[i]) {
 				return true
 			}
 		}
@@ -245,6 +245,5 @@ This is used only for BindRule instances with parentheticals, we
 wish to remove for simplified and more reliable parsing ...
 */
 func trimParen(raw string) string {
-	return trimSfx(trimPfx(raw,`(`),`)`)
+	return trimSfx(trimPfx(raw, `(`), `)`)
 }
-

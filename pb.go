@@ -15,7 +15,7 @@ Permission defines the rights and disposition of a single Permission
 + Bind Rule pair.
 */
 type Permission struct {
-	Allow  *bool	// ptr for safety reasons
+	Allow  *bool // ptr for safety reasons
 	Rights []string
 }
 
@@ -84,9 +84,9 @@ func ParsePermission(raw string) (perm Permission, err error) {
 	if perm, err = processBindPermission(p.Permission()); err == nil {
 		got := perm.String()
 		want := raw
-		if rplc(got,` `,``) != rplc(want,` `,``) {
+		if rplc(got, ` `, ``) != rplc(want, ` `, ``) {
 			err = errorf("%T parse failed; unexpected result (bad syntax?): [%s]",
-				perm,got)
+				perm, got)
 			return perm, err
 		}
 	}
@@ -116,7 +116,7 @@ func processBindPermission(p IPermissionContext) (r Permission, err error) {
 }
 
 /*
-processPermissionDisposition returns a pointer to a bool alongside an error. This is a 
+processPermissionDisposition returns a pointer to a bool alongside an error. This is a
 risky area, and we want to avoid false positives especially in the case of a permission
 disposition. To do this, we use a double mutex boolean check to ensure ALLOW is "on"
 AND DENY is "off" --OR-- ALLOW is "off" AND DENY is "on". Furthermore, we need to avoid
@@ -124,29 +124,29 @@ the otherwise helpful bool defaults that would be imposed, therefore this is the
 we use the bool pointer, versus a literal.
 */
 func processPermissionDisposition(d IDispositionContext) (disp *bool, err error) {
-        if d == nil {
-                err = errorf("%T instance is nil, cannot proceed", d)
-                return
-        }
+	if d == nil {
+		err = errorf("%T instance is nil, cannot proceed", d)
+		return
+	}
 
-        // Determine the permission disposition, or fail
-        // if not an anticipated result ...
-        granted := d.GrantedPermission()
-        withheld := d.WithheldPermission()
+	// Determine the permission disposition, or fail
+	// if not an anticipated result ...
+	granted := d.GrantedPermission()
+	withheld := d.WithheldPermission()
 
-        if granted != nil && withheld == nil {
+	if granted != nil && withheld == nil {
 		// Confirmed 'allow'
 		disp = new(bool)
 		*disp = granted.ALLOW() != nil
-        } else if granted == nil && withheld != nil {
+	} else if granted == nil && withheld != nil {
 		// Confirmed 'deny'
 		disp = new(bool)
-		*disp = false	// !! HARD-CODED FALSE FOR SECURITY REASONS -- DO NOT CHANGE !!
-        } else {
+		*disp = false // !! HARD-CODED FALSE FOR SECURITY REASONS -- DO NOT CHANGE !!
+	} else {
 		err = errorf("%T parse failed: permission disposition unspecified or ambiguous (hint: choose ONE of 'allow' OR 'deny'", d)
 	}
 
-        return
+	return
 }
 
 /*
@@ -154,20 +154,20 @@ processPermissionRights returns the string representation of each privilege (rig
 found within the sequence of IPrivilegeContext instances (privs). If the resolution
 of any right fails, or if the resulting number does *not* equal the length of the
 IPrivilegeContext slices provided as input, an error is returned alongside an empty
-list of privileges 
+list of privileges
 */
 func processPermissionRights(privs []IPrivilegeContext) (rights []string, err error) {
 	// Empty context slices
-        if len(privs) == 0 {
-                err = errorf("Empty %T", privs)
-                return
-        }
+	if len(privs) == 0 {
+		err = errorf("Empty %T", privs)
+		return
+	}
 
 	// empty context slice (just check #0)
-        if privs[0].GetChildCount() == 0 {
-                err = errorf("No rights found in %T", privs)
-                return
-        }
+	if privs[0].GetChildCount() == 0 {
+		err = errorf("No rights found in %T", privs)
+		return
+	}
 
 	// obtain slices of rights identifiers, appending
 	// each to the return slice type.
@@ -181,8 +181,8 @@ func processPermissionRights(privs []IPrivilegeContext) (rights []string, err er
 	}
 
 	var (
-		pl int = len(privs)	// privs len
-		rl int = len(rights)	// result len
+		pl int = len(privs)  // privs len
+		rl int = len(rights) // result len
 	)
 
 	if pl != rl {
@@ -246,7 +246,7 @@ func processBindRule(ibrc IBindRuleContext) (r stackage.Condition, err error) {
 
 		case *BindKeywordContext:
 			var kw string
-			if kw, err = processRuleKeyword(tv,`bind`); err != nil {
+			if kw, err = processRuleKeyword(tv, `bind`); err != nil {
 				return
 			}
 			r.SetKeyword(kw)
@@ -279,7 +279,6 @@ func processBindRule(ibrc IBindRuleContext) (r stackage.Condition, err error) {
 		r.SetCategory(`<invalid_bind>`)
 	}
 
-
 	return
 }
 
@@ -304,11 +303,11 @@ func ParseBindRules(raw string) (b stackage.Stack, err error) {
 
 	w, _ := booleanContextFromBindRules(brs)
 	if b, err = processBindRules(brs, 0, isParentheticalContext(brs), w); err == nil {
-		got := rplc(b.String(),` `,``)
-		want := rplc(raw,` `,``)
+		got := rplc(b.String(), ` `, ``)
+		want := rplc(raw, ` `, ``)
 		if got != want {
-                        err = errorf("BindRules parse failed; unexpected result (bad syntax?): expected '%s', got '%s'",
-				want,got)
+			err = errorf("BindRules parse failed; unexpected result (bad syntax?): expected '%s', got '%s'",
+				want, got)
 		}
 	}
 
@@ -343,7 +342,6 @@ func processBindRules(ctx IBindRulesContext, depth int, oparen bool, boolword ..
 		err = errorf("%T instance is nil; cannot proceed", ctx)
 		return
 	}
-
 
 	var iparen bool = isParentheticalContext(ctx)
 	var nxw string
@@ -587,7 +585,7 @@ func disenvelopNestedNot(word string, inner stackage.Stack) stackage.Stack {
 	// Obtain the last slice present within
 	// the inner stack. If not found, then
 	// return the inner stack untouched.
-        slice, ok := inner.Index(inner.Len()-1)
+	slice, ok := inner.Index(inner.Len() - 1)
 	if !ok {
 		return inner
 	}
@@ -595,7 +593,7 @@ func disenvelopNestedNot(word string, inner stackage.Stack) stackage.Stack {
 	// Type assert the obtained (any) slice from
 	// the inner stack. If not a stackage.Stack,
 	// return the inner stack untouched.
-        assert, asserted := slice.(stackage.Stack)
+	assert, asserted := slice.(stackage.Stack)
 	if !asserted {
 		return inner
 	}
@@ -603,7 +601,7 @@ func disenvelopNestedNot(word string, inner stackage.Stack) stackage.Stack {
 	// Ensure the asserted stack has a label
 	// of 'NOT'. If not NOT (lol), we return
 	// the inner stack untouched.
-        if !hasSfx(trimS(assert.Kind()), `NOT`) {
+	if !hasSfx(trimS(assert.Kind()), `NOT`) {
 		return inner
 	}
 
@@ -611,7 +609,7 @@ func disenvelopNestedNot(word string, inner stackage.Stack) stackage.Stack {
 	// nested NOT contexts. If no nesting has
 	// been detected, return the inner stack
 	// untouched.
-        if !assert.IsNesting() {
+	if !assert.IsNesting() {
 		return inner
 	}
 
@@ -620,7 +618,7 @@ func disenvelopNestedNot(word string, inner stackage.Stack) stackage.Stack {
 	// If disenvelopment fails, return the inner
 	// stack untouched. Else, dise var now ready
 	// for interrogation.
-        dise, eok := disenvelopStack(assert)
+	dise, eok := disenvelopStack(assert)
 	if !eok {
 		return inner
 	}
@@ -628,14 +626,14 @@ func disenvelopNestedNot(word string, inner stackage.Stack) stackage.Stack {
 	// This function applies to singular
 	// nested NOT contexts only! Thus, a
 	// length of one (1) is required.
-        if dise.Len() != 1 {
+	if dise.Len() != 1 {
 		return inner
 	}
 
 	// Create a new stack identified by 'word'
 	// or, if unidentifiable, return the inner
 	// stack untouched.
-        naught, idd := stackByBoolOp(word)
+	naught, idd := stackByBoolOp(word)
 	if !idd {
 		return inner
 	}
@@ -645,17 +643,17 @@ func disenvelopNestedNot(word string, inner stackage.Stack) stackage.Stack {
 	// TO INNER ARE ABOUT TO HAPPEN).
 	////////////////////////////////////////
 
-        dise.Transfer(naught)		// transcribe contents from dise (old) -> naught (new)
-        naught.Paren(dise.IsParen())	// preserve parentheticals
-        dise = naught			// clobber dise var with new ptr
+	dise.Transfer(naught)        // transcribe contents from dise (old) -> naught (new)
+	naught.Paren(dise.IsParen()) // preserve parentheticals
+	dise = naught                // clobber dise var with new ptr
 
-        envl, _ := stackByBoolOp(trimS(inner.Kind()))	// create new stack based on INNER's kind
-	idx := inner.Len()-1		// preserve slice number (idx), as we'll be wiping out the stack
-        inner.Remove(idx)		// Wipe out idx slice containing that which we are re-enveloping
-        inner.Transfer(envl)		// Move everything from inner into new envelope stack (envl)
-        inner.Reset()			// Remove all contents of inner (don't clobber yet)
-        envl.Insert(dise, idx)		// Insert original disenveloped NOT into new envelope at slice #idx
-        inner = envl			// clobber inner for return
+	envl, _ := stackByBoolOp(trimS(inner.Kind())) // create new stack based on INNER's kind
+	idx := inner.Len() - 1                        // preserve slice number (idx), as we'll be wiping out the stack
+	inner.Remove(idx)                             // Wipe out idx slice containing that which we are re-enveloping
+	inner.Transfer(envl)                          // Move everything from inner into new envelope stack (envl)
+	inner.Reset()                                 // Remove all contents of inner (don't clobber yet)
+	envl.Insert(dise, idx)                        // Insert original disenveloped NOT into new envelope at slice #idx
+	inner = envl                                  // clobber inner for return
 
 	return inner
 }
@@ -683,12 +681,12 @@ func ParsePermissionBindRule(raw string) (r PermissionBindRule, err error) {
 	// Verify what we got back, assuming no errors
 	// were reported
 	if r, err = processPermissionBindRule(pbr); err == nil {
-		got := rplc(r.String(),` `,``)
-                want := rplc(raw,` `,``)
-                if got != want {
-                        err = errorf("%T parse failed; unexpected result (bad syntax?): expected '%s', got '%s'",
+		got := rplc(r.String(), ` `, ``)
+		want := rplc(raw, ` `, ``)
+		if got != want {
+			err = errorf("%T parse failed; unexpected result (bad syntax?): expected '%s', got '%s'",
 				r, want, got)
-                }
+		}
 	}
 
 	return
@@ -716,8 +714,8 @@ func processPermissionBindRule(pbr IPermissionBindRuleContext) (r PermissionBind
 
 	// obtain and verify bind rules stackage.Stack ...
 	brs := pbr.BindRules()
-        w, _ := booleanContextFromBindRules(brs)
-        r.B, err = processBindRules(brs, 0, isParentheticalContext(brs), w)
+	w, _ := booleanContextFromBindRules(brs)
+	r.B, err = processBindRules(brs, 0, isParentheticalContext(brs), w)
 
 	return
 }
@@ -729,9 +727,9 @@ zero (0) or more PermissionBindRule instances is returned alongside an error.
 */
 func ParsePermissionBindRules(raw string) (p stackage.Stack, err error) {
 	var _p *ACIParser
-        if _p, err = initAntlr(raw); err != nil {
-                return
-        }
+	if _p, err = initAntlr(raw); err != nil {
+		return
+	}
 
 	ins := _p.Parse().Instruction()
 	if p, err = processPermissionBindRules(ins.AllPermissionBindRule()); err != nil {
@@ -749,19 +747,19 @@ func processPermissionBindRules(ctx []IPermissionBindRuleContext) (r stackage.St
 		err = errorf("Empty %T, nothing to parse", ctx)
 		return
 	}
-        r = stackage.List()
+	r = stackage.List()
 
 	// iterate the slices of IPermissionBindRuleContext
 	// provided by ANTLR to attempt to parse them into
 	// individual instances of PermissionBindRule. If
 	// successful, push into return stack (r).
-        for _, _pbr := range ctx {
+	for _, _pbr := range ctx {
 		var pbr PermissionBindRule
-                if pbr, err = processPermissionBindRule(_pbr); err != nil {
-                        return
-                }
-                r.Push(pbr)
-        }
+		if pbr, err = processPermissionBindRule(_pbr); err != nil {
+			return
+		}
+		r.Push(pbr)
+	}
 
 	var (
 		rl int = r.Len()
@@ -923,9 +921,9 @@ func contextIsParenthetical(ctx IBindRulesContext) (ok bool) {
 		// non-nil opening parenthetical context.
 
 		if x, ok = l.(*ClosingParenthesisContext); ok && x != nil {
-	                if hasPfx(l.(*OpeningParenthesisContext).GetText(), `<missing`) {
-	                        return
-	                }
+			if hasPfx(l.(*OpeningParenthesisContext).GetText(), `<missing`) {
+				return
+			}
 			// The final token was confirmed to be a
 			// non-nil closing parenthetical context.
 
@@ -987,7 +985,7 @@ func parentheticalContextCount(ctx IBindRulesContext) (int, bool) {
 
 	var pair int
 	var fs int
-	var l,r int
+	var l, r int
 
 	for i := 0; i < count; i++ {
 		switch tv := ctx.GetChild(i).(type) {

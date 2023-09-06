@@ -145,9 +145,9 @@ func ParseInstruction(raw string) (i Instruction, err error) {
 	}
 
 	var (
-		T  stackage.Stack	// target rules
-		L  AccessControlLabel	// access control label
-		PB stackage.Stack	// permission bind rules
+		T  stackage.Stack     // target rules
+		L  AccessControlLabel // access control label
+		PB stackage.Stack     // permission bind rules
 	)
 
 	// obtain our target rules, if any were
@@ -171,22 +171,22 @@ func ParseInstruction(raw string) (i Instruction, err error) {
 	}
 
 	/*
-	for _, pbr := range ins.AllPermissionBindRule() {
+		for _, pbr := range ins.AllPermissionBindRule() {
 
-		var p Permission
-		var b stackage.Stack
+			var p Permission
+			var b stackage.Stack
 
-		if p, err = processBindPermission(pbr.Permission()); err != nil {
-			return
+			if p, err = processBindPermission(pbr.Permission()); err != nil {
+				return
+			}
+
+			// obtain and verify bind rules "stack"
+			if b, err = processBindRules(pbr.BindRules(), 0, false); err != nil {
+				return
+			}
+
+			PB.Push(PermissionBindRule{p, b})
 		}
-
-		// obtain and verify bind rules "stack"
-		if b, err = processBindRules(pbr.BindRules(), 0, false); err != nil {
-			return
-		}
-
-		PB.Push(PermissionBindRule{p, b})
-	}
 	*/
 
 	return Instruction{T, L, PB}, nil

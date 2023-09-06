@@ -29,7 +29,7 @@ func TestParseBindRules(t *testing.T) {
 		r, err := ParseBindRules(want)
 		if err != nil {
 			// There was an error
-			if idx % 2 == 0 {
+			if idx%2 == 0 {
 				// Valid test should have worked, but did not.
 				t.Errorf("%s failed [idx:%d/%d]: %v\nwant: '%s'\ngot:  '%s'",
 					t.Name(), idx, ct, err, want, r)
@@ -38,7 +38,7 @@ func TestParseBindRules(t *testing.T) {
 			continue
 		} else {
 			// There was no error
-			if idx % 2 != 0 {
+			if idx%2 != 0 {
 				// Invalid test should have failed, but did not.
 				t.Errorf("%s failed [idx:%d/%d]: invalid %T (%s) parse attempt returned no error",
 					t.Name(), idx, ct, r, r.String())
@@ -73,24 +73,24 @@ package-level function.
 
 A BindRule is a statement of the following syntax:
 
-                                             Available expression values/contexts
-                                        ----------------------------------------------
-     One (1) Bind Keyword        +----- Allows LDAP DistinguishedName/URI abstracts,
-  +---------------------------+ /       possibly in a multi-valued context
-  | userdn,  groupdn, roledn, |+
-  +---------------------------+         Allows network/mechanism/confidential
-  | ip, dns, ssf, authmethod, |+------- abstract contexts
-  +---------------------------+
-  | userattr, groupattr,      |+------- Allows composite attr/val value-matching
-  +---------------------------+         statements, possibly enveloped as a URI
-  | timeofday or dayofweek    |+        or basic attributeBindTypeOrValue context
-  +---------------------------+ \
-      |                          +----- Allows temporal contexts
-      |    <comparison                     
-  <keyword> operator> <expression>                 ^
-         ______|______        \                    |
-        /  |  | |  |  \        See expression descriptions
-       EQ LE LT GT GE NE
+	                                           Available expression values/contexts
+	                                      ----------------------------------------------
+	   One (1) Bind Keyword        +----- Allows LDAP DistinguishedName/URI abstracts,
+	+---------------------------+ /       possibly in a multi-valued context
+	| userdn,  groupdn, roledn, |+
+	+---------------------------+         Allows network/mechanism/confidential
+	| ip, dns, ssf, authmethod, |+------- abstract contexts
+	+---------------------------+
+	| userattr, groupattr,      |+------- Allows composite attr/val value-matching
+	+---------------------------+         statements, possibly enveloped as a URI
+	| timeofday or dayofweek    |+        or basic attributeBindTypeOrValue context
+	+---------------------------+ \
+	    |                          +----- Allows temporal contexts
+	    |    <comparison
+	<keyword> operator> <expression>                 ^
+	       ______|______        \                    |
+	      /  |  | |  |  \        See expression descriptions
+	     EQ LE LT GT GE NE
 
 - Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
 
@@ -106,19 +106,19 @@ func TestParseBindRule(t *testing.T) {
 			continue // don't error, just skip ahead.
 		}
 
-	        r, err := ParseBindRule(want)
-	        if err != nil {
+		r, err := ParseBindRule(want)
+		if err != nil {
 			// There was an error ...
-			if idx % 2 == 0 || idx == 0 {
+			if idx%2 == 0 || idx == 0 {
 				// Valid test should have worked, but did not ...
 				t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: err:%v\nwant: '%s'\ngot:  '%s'",
 					t.Name(), idx, i, ct, err, want, r)
 				return
 			}
 			continue
-	        } else {
+		} else {
 			// There was no error ...
-			if idx % 2 != 0 {
+			if idx%2 != 0 {
 				// Invalid test should have failed, but did not ...
 				t.Errorf("%s [INVALID] failed [idx[%d]::%d/%d]: %T (%s) parse attempt returned no error",
 					t.Name(), idx, i, ct, r, want)
@@ -149,17 +149,17 @@ func TestParsePermissions(t *testing.T) {
 	ct := len(testPermissionManifest)
 
 	for idx := 0; idx < ct; idx++ {
-                want, found := testPermissionManifest[idx]
-                if !found {
-                        t.Errorf("%s failed [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
-                                t.Name(), idx, ct, idx)
-                        return
-                }
+		want, found := testPermissionManifest[idx]
+		if !found {
+			t.Errorf("%s failed [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+				t.Name(), idx, ct, idx)
+			return
+		}
 
 		r, err := ParsePermission(want)
 		if err != nil {
 			// There was an error ...
-			if idx % 2 == 0 || idx == 0 {
+			if idx%2 == 0 || idx == 0 {
 				// Valid test should have worked, but did not ...
 				t.Errorf("%s failed [idx:%d/%d]: err:%v",
 					t.Name(), idx, ct, err)
@@ -168,7 +168,7 @@ func TestParsePermissions(t *testing.T) {
 			continue // if it was supposed to fail, skip ahead
 		} else {
 			// There was no error ...
-			if idx % 2 != 0 {
+			if idx%2 != 0 {
 				// Invalid test should have failed, but did not ...
 				t.Errorf("%s failed [idx:%d/%d: no error returned for bogus value [%s]",
 					t.Name(), idx, ct, want)
@@ -190,16 +190,16 @@ func TestParsePermissions(t *testing.T) {
 TestPermissionBindRule tests the direct execution of the ParsePermissionBindRule
 package level function. A PermissionBindRule is a statement of the following syntax:
 
-                 delimited  ASCII           ASCII
-                 privilege   #32              #59
-     allow/deny    names      |                |
-         |           |        |                |
-  [ disposition (right,...)  WHSP [BindRules]  ; ]
-   ------------------------   |   -----------   \
-          Permission          |    BindRules     \
-                               \                  terminator
-                                \
-                            seperator
+	               delimited  ASCII           ASCII
+	               privilege   #32              #59
+	   allow/deny    names      |                |
+	       |           |        |                |
+	[ disposition (right,...)  WHSP [BindRules]  ; ]
+	 ------------------------   |   -----------   \
+	        Permission          |    BindRules     \
+	                             \                  terminator
+	                              \
+	                          seperator
 
 - Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
 
@@ -211,16 +211,16 @@ func TestParsePermissionBindRule(t *testing.T) {
 	var err error
 	for idx := 0; idx < ct; idx++ {
 		want, found := testPermissionBindRuleManifest[idx]
-                if !found {
-                        t.Errorf("%s [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
-                                t.Name(), idx, ct, idx)
-                        return
+		if !found {
+			t.Errorf("%s [idx:%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+				t.Name(), idx, ct, idx)
+			return
 		}
 
 		var got PermissionBindRule
 		if got, err = ParsePermissionBindRule(want); err != nil {
 			// There was an error ...
-			if idx % 2 == 0 || idx == 0 {
+			if idx%2 == 0 || idx == 0 {
 				// Valid test should have worked, but did not ...
 				t.Errorf("%s [VALID] failed [idx:%d/%d]: err:%v",
 					t.Name(), idx, ct, err)
@@ -231,7 +231,7 @@ func TestParsePermissionBindRule(t *testing.T) {
 		}
 
 		// There was no error ...
-		if idx % 2 != 0 {
+		if idx%2 != 0 {
 			// Invalid test should have failed, but did not ...
 			t.Errorf("%s [INVALID] failed [idx:%d/%d]: %T parse returned no error",
 				t.Name(), idx, ct, got)
@@ -240,7 +240,7 @@ func TestParsePermissionBindRule(t *testing.T) {
 
 		if got.String() != want {
 			// There was an (unexpected) result during strcmp.
-                        t.Errorf("%s [VALID] failed [idx:%d/%d]: unexpected result;\nwant '%s'\ngot  '%s'",
+			t.Errorf("%s [VALID] failed [idx:%d/%d]: unexpected result;\nwant '%s'\ngot  '%s'",
 				t.Name(), idx, ct, want, got)
 			return
 		}
