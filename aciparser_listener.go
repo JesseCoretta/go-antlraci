@@ -16,6 +16,9 @@ type ACIParserListener interface {
 	// EnterInstructionAnchor is called when entering the instructionAnchor production.
 	EnterInstructionAnchor(c *InstructionAnchorContext)
 
+	// EnterPermissionBindRules is called when entering the permissionBindRules production.
+	EnterPermissionBindRules(c *PermissionBindRulesContext)
+
 	// EnterPermissionBindRule is called when entering the permissionBindRule production.
 	EnterPermissionBindRule(c *PermissionBindRuleContext)
 
@@ -213,6 +216,9 @@ type ACIParserListener interface {
 
 	// ExitInstructionAnchor is called when exiting the instructionAnchor production.
 	ExitInstructionAnchor(c *InstructionAnchorContext)
+
+	// ExitPermissionBindRules is called when exiting the permissionBindRules production.
+	ExitPermissionBindRules(c *PermissionBindRulesContext)
 
 	// ExitPermissionBindRule is called when exiting the permissionBindRule production.
 	ExitPermissionBindRule(c *PermissionBindRuleContext)

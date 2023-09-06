@@ -731,10 +731,8 @@ func ParsePermissionBindRules(raw string) (p stackage.Stack, err error) {
 		return
 	}
 
-	ins := _p.Parse().Instruction()
-	if p, err = processPermissionBindRules(ins.AllPermissionBindRule()); err != nil {
-		printf("\n\nOH SHIT: %s\n\n", _p.PermissionBindRule().GetText())
-	}
+	pbrs := _p.PermissionBindRules()
+	p, err = processPermissionBindRules(pbrs)
 
 	return
 }
@@ -742,8 +740,10 @@ func ParsePermissionBindRules(raw string) (p stackage.Stack, err error) {
 /*
 processPermissionBindRules is a private parser function called by ParsePermissionBindRules.
 */
-func processPermissionBindRules(ctx []IPermissionBindRuleContext) (r stackage.Stack, err error) {
-	if len(ctx) == 0 {
+func processPermissionBindRules(ctx IPermissionBindRulesContext) (r stackage.Stack, err error) {
+	var ct int = ctx.GetChildCount()
+
+	if ct == 0 {
 		err = errorf("Empty %T, nothing to parse", ctx)
 		return
 	}
@@ -753,7 +753,7 @@ func processPermissionBindRules(ctx []IPermissionBindRuleContext) (r stackage.St
 	// provided by ANTLR to attempt to parse them into
 	// individual instances of PermissionBindRule. If
 	// successful, push into return stack (r).
-	for _, _pbr := range ctx {
+	for _, _pbr := range ctx.AllPermissionBindRule() {
 		var pbr PermissionBindRule
 		if pbr, err = processPermissionBindRule(_pbr); err != nil {
 			return
@@ -761,13 +761,10 @@ func processPermissionBindRules(ctx []IPermissionBindRuleContext) (r stackage.St
 		r.Push(pbr)
 	}
 
-	var (
-		rl int = r.Len()
-		cl int = len(ctx)
-	)
+	var rl int = r.Len()
 
-	if rl != cl {
-		err = errorf("Failed to parse one or more %T slices; expected '%d', received '%d'", ctx, cl, rl)
+	if rl != ct {
+		err = errorf("Failed to parse one or more %T slices; expected '%d', received '%d'", ctx, ct, rl)
 	}
 
 	return

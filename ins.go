@@ -166,28 +166,9 @@ func ParseInstruction(raw string) (i Instruction, err error) {
 	// by a single semicolon (ASCII #59). An instruction MUST have
 	// at least one (1) permission+bind statement that honors this
 	// requirement, but may contain more if needed.
-	if PB, err = processPermissionBindRules(ins.AllPermissionBindRule()); err != nil {
+	if PB, err = processPermissionBindRules(ins.PermissionBindRules()); err != nil {
 		return
 	}
-
-	/*
-		for _, pbr := range ins.AllPermissionBindRule() {
-
-			var p Permission
-			var b stackage.Stack
-
-			if p, err = processBindPermission(pbr.Permission()); err != nil {
-				return
-			}
-
-			// obtain and verify bind rules "stack"
-			if b, err = processBindRules(pbr.BindRules(), 0, false); err != nil {
-				return
-			}
-
-			PB.Push(PermissionBindRule{p, b})
-		}
-	*/
 
 	return Instruction{T, L, PB}, nil
 }

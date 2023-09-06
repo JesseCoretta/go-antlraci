@@ -5,20 +5,22 @@ import (
 )
 
 /*
-TestInstruction iterates the testInstructionManifest, parses each member value
+TestParseInstruction iterates the testInstructionManifest, parses each member value
 and compares the return result with the original.
 */
-func TestInstruction(t *testing.T) {
+func TestParseInstruction(t *testing.T) {
 	ct := len(testInstructionManifest)
 
 	for idx, want := range testInstructionManifest {
 		/*
-				want, found := testInstructionManifest[idx]
-		                if !found {
-		                        t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
-		                                t.Name(), idx, idx+1, ct, idx)
-		                        return
-		                }
+					// TODO: add bad instruction testers
+					// similar to the other tests ...
+					want, found := testInstructionManifest[idx]
+			                if !found {
+			                        t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+			                                t.Name(), idx, idx+1, ct, idx)
+			                        return
+			                }
 		*/
 
 		r, err := ParseInstruction(want)

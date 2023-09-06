@@ -38,6 +38,12 @@ func (s *BaseACIParserListener) EnterInstructionAnchor(ctx *InstructionAnchorCon
 // ExitInstructionAnchor is called when production instructionAnchor is exited.
 func (s *BaseACIParserListener) ExitInstructionAnchor(ctx *InstructionAnchorContext) {}
 
+// EnterPermissionBindRules is called when production permissionBindRules is entered.
+func (s *BaseACIParserListener) EnterPermissionBindRules(ctx *PermissionBindRulesContext) {}
+
+// ExitPermissionBindRules is called when production permissionBindRules is exited.
+func (s *BaseACIParserListener) ExitPermissionBindRules(ctx *PermissionBindRulesContext) {}
+
 // EnterPermissionBindRule is called when production permissionBindRule is entered.
 func (s *BaseACIParserListener) EnterPermissionBindRule(ctx *PermissionBindRuleContext) {}
 

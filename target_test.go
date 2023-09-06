@@ -5,14 +5,15 @@ import (
 )
 
 /*
-TestTargetRules iterates the testTargetRulesManifest, parses each
+TestParseTargetRules iterates the testTargetRulesManifest, parses each
 member value and compares the return result with the original.
 */
-func TestTargetRule(t *testing.T) {
+func TestParseTargetRule(t *testing.T) {
 
 	ct := len(testNewTargetRuleManifest)
 
 	for idx, want := range testNewTargetRuleManifest {
+		// TODO: temporary
 		//for idx := 0; idx < ct; idx++ {
 		//want, found := testNewTargetRuleManifest[idx]
 		//if !found {

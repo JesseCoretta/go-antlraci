@@ -248,54 +248,50 @@ func TestParsePermissionBindRule(t *testing.T) {
 }
 
 /*
-// ready in 0.0.1-alpha.0+
-
 - Even numbered map entries are VALID tests which SHOULD NOT FAIL for any reason
 
 - Odd numbered map entries are INVALID tests which SHOULD FAIL w/ an error
 */
-/*
-func TestPermissionBindRules(t *testing.T) {
-        ct := len(testPermissionBindRulesManifest)
+func TestParsePermissionBindRules(t *testing.T) {
+	ct := len(testPermissionBindRulesManifest)
 
-        var err error
-        for idx := 0; idx < ct; idx++ {
-                wanted, found := testPermissionBindRulesManifest[idx]
-                if !found {
-                        t.Errorf("%s [idx[%d]::%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
-                                t.Name(), idx, idx+1, ct, idx)
-                        return
-                }
+	var err error
+	for idx := 0; idx < ct; idx++ {
+		wanted, found := testPermissionBindRulesManifest[idx]
+		if !found {
+			t.Errorf("%s [idx[%d]::%d/%d]: MISSING MAP ENTRY FOR INDEX %d?",
+				t.Name(), idx, idx+1, ct, idx)
+			return
+		}
 
 		want := join(wanted, string(rune(32)))
 
-                got := newStack()
-                if got, err = ParsePermissionBindRules(want); err != nil {
-                        // There was an error ...
-                        if idx % 2 == 0 {
-                                // Valid test should have worked, but did not ...
-                                t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: err:%v",
-                                        t.Name(), idx, idx+1, ct, err)
-                                return
-                        }
+		got := newStack()
+		if got, err = ParsePermissionBindRules(want); err != nil {
+			// There was an error ...
+			if idx%2 == 0 {
+				// Valid test should have worked, but did not ...
+				t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: err:%v",
+					t.Name(), idx, idx+1, ct, err)
+				return
+			}
 
-                        continue // if it was supposed to fail, skip ahead
-                }
+			continue // if it was supposed to fail, skip ahead
+		}
 
-                // There was no error ...
-                if idx % 2 != 0 {
-                        // Invalid test should have failed, but did not ...
-                        t.Errorf("%s [INVALID] failed [idx[%d]::%d/%d]: invalid %T parse returned no error",
-                                t.Name(), idx, idx+1, ct, got)
-                        return
-                }
+		// There was no error ...
+		if idx%2 != 0 {
+			// Invalid test should have failed, but did not ...
+			t.Errorf("%s [INVALID] failed [idx[%d]::%d/%d]: invalid %T parse returned no error",
+				t.Name(), idx, idx+1, ct, got)
+			return
+		}
 
-                if got.String() != want {
-                        // There was an (unexpected) result during strcmp.
-                        t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: unexpected result;\nwant '%s'\ngot  '%s'",
-                                t.Name(), idx, idx+1, ct, want, got)
-                        return
-                }
-        }
+		if got.String() != want {
+			// There was an (unexpected) result during strcmp.
+			t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: unexpected result;\nwant '%s'\ngot  '%s'",
+				t.Name(), idx, idx+1, ct, want, got)
+			return
+		}
+	}
 }
-*/
