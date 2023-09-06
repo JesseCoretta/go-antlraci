@@ -104,11 +104,20 @@ parse
   ;
 
 instruction
-  : targetRules? openingParenthesis instructionAnchor permissionBindRule+ closingParenthesis
+  : targetRules? openingParenthesis instructionAnchor permissionBindRules closingParenthesis
   ;
 
 instructionAnchor
   : anchor accessControlLabel ruleTerminator
+  ;
+
+/*
+permissionBindRules is the plural form of permissionBindRule. It is found within a complete 
+ACI (instruction), and is comprised of one (1) Permission and one (1) BindRules. An ACI may
+have multiple permissionBindRule expressions, but must always have at least one (1).
+*/
+permissionBindRules
+  : permissionBindRule+
   ;
 
 permissionBindRule
@@ -156,9 +165,10 @@ allPrivilege		: ALL_PRIV	;
 noPrivilege		: NO_PRIV	;
 
 /*
-targetRule describes the (optional) Target Rule syntax. Target Rules
-are *ALWAYS* parenthetical. Each distinct keyword should only be used
-ONCE in a given sequence of targetRules.
+targetRule describes the (optional) Target Rule syntax. A TargetRule
+instance is *ALWAYS* parenthetical. Each distinct keyword should only
+be used ONCE in a given instance of targetRules, the plural form of
+this rule.
 */
 targetRule
   : openingParenthesis targetKeyword targetOperator expressionValues closingParenthesis
@@ -169,6 +179,10 @@ targetOperator
   | notEqualTo
   ;
 
+/*
+targetRules is the plural form of targetRule. It is found within complete ACI (instruction)
+instances, is 100% optional and is the absolute first component in an ACI.
+*/
 targetRules		: targetRule+	;
 
 wordAnd			: WORD_AND	;
@@ -178,6 +192,9 @@ wordNot			: WORD_NOT	;
 /*
 bindRules defines one or more bindRule expressions that shall reside within
 the bindRules field of a permissionBindRule "pair".
+
+NOTE: I have to be honest. I'm still not 100% convinced this is right. Stay
+tuned ...
 */
 bindRules
   : openingParenthesis bindRules closingParenthesis
@@ -189,6 +206,22 @@ bindRule
   : bindKeyword bindOperator expressionValues
   ;
 
+/*
+expressionValues represents the value within a BindRule or TargetRule condition
+expression (e.g.: 'key = value'). This grammar honors the following scenarios
+allowed by the ACIv3 syntax:
+
+- "<value>"				// single valued scheme	(single value quoted)
+- "<value>" || "<value>" || "<value>"	// multi valued scheme	(slices quoted only, not delims)
+- "<value> || <value> || <value>"	// multi valued alt. scheme (outer quotes only)
+
+Virtually any character is fine within a given quoted value, so long as its not any
+double-quote character other than the closing double-quotation. Previous incarnations
+of the ACIv3 syntax have been very lax about the use of quotations.
+
+It is the recommendation of most vendors (and this engineer) that quotes ALWAYS be used,
+thus they are strictly enforced in this grammar).
+*/
 expressionValues: QUOTED_STRING ( symbolicOr QUOTED_STRING )*;
 
 symbolicOr: SYMBOLIC_OR;
