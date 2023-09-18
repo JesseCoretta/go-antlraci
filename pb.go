@@ -238,6 +238,7 @@ func processBindRule(ibrc IBindRuleContext) (r stackage.Condition, err error) {
 	}
 
 	var ct int = ibrc.GetChildCount()
+	r.Init()
 
 	// iterate child components of the bind rule:
 	// keyword, operator, value(s).
@@ -446,6 +447,10 @@ func processBindRules(ctx IBindRulesContext, depth int, oparen bool, boolword ..
 		return
 	}
 	outer = inner
+
+	// Defrag+Reveal
+	outer.Defrag().
+		Reveal()
 
 	return
 }

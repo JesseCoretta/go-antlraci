@@ -109,7 +109,7 @@ func TestParseBindRule(t *testing.T) {
 		r, err := ParseBindRule(want)
 		if err != nil {
 			// There was an error ...
-			if idx%2 == 0 || idx == 0 {
+			if idx%2 == 0 {
 				// Valid test should have worked, but did not ...
 				t.Errorf("%s [VALID] failed [idx[%d]::%d/%d]: err:%v\nwant: '%s'\ngot:  '%s'",
 					t.Name(), idx, i, ct, err, want, r)
@@ -197,7 +197,8 @@ package level function. A PermissionBindRule is a statement of the following syn
 	[ disposition (right,...)  WHSP [BindRules]  ; ]
 	 ------------------------   |   -----------   \
 	        Permission          |    BindRules     \
-	                             \                  terminator
+	                            +                   +- terminator
+				     \
 	                              \
 	                          seperator
 

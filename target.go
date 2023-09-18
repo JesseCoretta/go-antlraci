@@ -30,6 +30,8 @@ func processTargetRule(itrc ITargetRuleContext) (r stackage.Condition, err error
 		ex RuleExpression
 	)
 
+	r.Init()
+
 	for k := 0; k < ct; k++ {
 		switch tv := itrc.GetChild(k).(type) {
 
