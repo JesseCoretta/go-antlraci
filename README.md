@@ -16,7 +16,7 @@ This repository is under heavy development and may not yet be suitable for missi
 
 ## Purpose of this repository
 
-As there are some negative views in the community regarding the quality and efficiency of the Go code that ANTLR4 generates at this time, this `antlraci` package was created to keep cyclomatic penalties wholly separate from the as-of-yet unrelease `go-aci` package, as opposed to direct integration or even through `internal` import.
+As there are some negative views in the community regarding the quality and efficiency of the Go code that ANTLR4 generates at this time, this `antlraci` package was created to keep cyclomatic penalties wholly separate from its sister package [`go-aci`](https://github.com/JesseCoretta/go-aci).
 
 ## ANTLR4/ACI Codebase Generation Procedure
 
