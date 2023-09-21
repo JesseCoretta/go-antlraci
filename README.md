@@ -1,6 +1,6 @@
 # go-antlraci
 
-[![GoDoc](https://godoc.org/github.com/JesseCoretta/go-antlraci?status.svg)](https://godoc.org/github.com/JesseCoretta/go-antlraci) ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
+[![Go Reference](https://pkg.go.dev/github.com/JesseCoretta/go-antlraci?status.svg)](https://pkg.go.dev/github.com/JesseCoretta/go-antlraci) ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
 
 Package antlraci contains an ANTLR4-generated codebase meant to facilitate the parsing of ACIv3 definitions. The codebase is created through use of ANTLR4 parser/lexer grammar rules that honor the complete third (3rd) version of the Access Control Instruction syntax -- a form of permission expressions favored and supported by multiple X.500/LDAP server implementations on the market today.
 
@@ -42,8 +42,7 @@ Some package-level functions have been added to simplify the parsing process for
  - ParseBindRule
  - ParseBindRules
  - ParsePermissionBindRule
+ - ParsePermissionBindRules
  - ParseInstruction
 
-These are defined in the separate `ext.go` file, and are not generated (nor overwritten) by the ANTLR4 codebase generation system.
-
-See the Go [documentation](https://godoc.org/github.com/JesseCoretta/go-antlraci) for usage information.
+See the Go [documentation](https://pkg.go.dev/github.com/JesseCoretta/go-antlraci) for usage information.
